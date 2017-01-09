@@ -176,9 +176,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Machine-Learning-Engineer-Nanodegree">Machine Learning Engineer Nanodegree<a class="anchor-link" href="#Machine-Learning-Engineer-Nanodegree">&#182;</a></h1><h2 id="Introduction-and-Foundations">Introduction and Foundations<a class="anchor-link" href="#Introduction-and-Foundations">&#182;</a></h2><h2 id="Project:-Titanic-Survival-Exploration">Project: Titanic Survival Exploration<a class="anchor-link" href="#Project:-Titanic-Survival-Exploration">&#182;</a></h2><p>In 1912, the ship RMS Titanic struck an iceberg on its maiden voyage and sank, resulting in the deaths of most of its passengers and crew. In this introductory project, we will explore a subset of the RMS Titanic passenger manifest to determine which features best predict whether someone survived or did not survive. To complete this project, you will need to implement several conditional predictions and answer the questions below. Your project submission will be evaluated based on the completion of the code and your responses to the questions.</p>
-<blockquote><p><strong>Tip:</strong> Quoted sections like this will provide helpful instructions on how to navigate and use an iPython notebook.</p>
-</blockquote>
+<h1 id="Determining-Best-Features-on-Classifying-Survival-on-Titanic">Determining Best Features on Classifying Survival on Titanic<a class="anchor-link" href="#Determining-Best-Features-on-Classifying-Survival-on-Titanic">&#182;</a></h1><h4 id="Author:-Yuchin-Pan">Author: Yuchin Pan<a class="anchor-link" href="#Author:-Yuchin-Pan">&#182;</a></h4><h4 id="Using:-Python-2-via-Jupyter-Notebook">Using: Python 2 via Jupyter Notebook<a class="anchor-link" href="#Using:-Python-2-via-Jupyter-Notebook">&#182;</a></h4><h4 id="Course-by:-Udacity">Course by: Udacity<a class="anchor-link" href="#Course-by:-Udacity">&#182;</a></h4><p>In 1912, the ship RMS Titanic struck an iceberg on its maiden voyage and sank, resulting in the deaths of most of its passengers and crew. In this introductory project, we will explore a subset of the RMS Titanic passenger manifest to determine which features best predict whether someone survived or did not survive. To complete this project, you will need to implement several conditional predictions and answer the questions below. Your project submission will be evaluated based on the completion of the code and your responses to the questions.</p>
 
 </div>
 </div>
@@ -188,35 +186,31 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Getting-Started">Getting Started<a class="anchor-link" href="#Getting-Started">&#182;</a></h1><p>To begin working with the RMS Titanic passenger data, we'll first need to <code>import</code> the functionality we need, and load our data into a <code>pandas</code> DataFrame.<br>
-Run the code cell below to load our data and display the first few entries (passengers) for examination using the <code>.head()</code> function.</p>
-<blockquote><p><strong>Tip:</strong> You can run a code cell by clicking on the cell and using the keyboard shortcut <strong>Shift + Enter</strong> or <strong>Shift + Return</strong>. Alternatively, a code cell can be executed using the <strong>Play</strong> button in the hotbar after selecting it. Markdown cells (text cells like this one) can be edited by double-clicking, and saved using these same shortcuts. <a href="http://daringfireball.net/projects/markdown/syntax">Markdown</a> allows you to write easy-to-read plain text that can be converted to HTML.</p>
-</blockquote>
-
+<h2 id="Importing-and-Classifying">Importing and Classifying<a class="anchor-link" href="#Importing-and-Classifying">&#182;</a></h2>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[51]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Import libraries necessary for this project</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#Importing necessary libraries</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span> <span class="c1"># Allows the use of display() for DataFrames</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span> <span class="c1">#Allows the use of display() for dataframes</span>
 
-<span class="c1"># Import supplementary visualizations code visuals.py</span>
+<span class="c1">#importing supplementary visuals </span>
 <span class="kn">import</span> <span class="nn">visuals</span> <span class="kn">as</span> <span class="nn">vs</span>
 
-<span class="c1"># Pretty display for notebooks</span>
+<span class="c1">#display for notebooks</span>
 <span class="o">%</span><span class="k">matplotlib</span> inline
 
-<span class="c1"># Load the dataset</span>
+<span class="c1">#load the dataset</span>
 <span class="n">in_file</span> <span class="o">=</span> <span class="s1">&#39;titanic_data.csv&#39;</span>
 <span class="n">full_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">in_file</span><span class="p">)</span>
 
-<span class="c1"># Print the first few entries of the RMS Titanic data</span>
+<span class="c1">#print the first few entries of the RMS titanic data</span>
 <span class="n">display</span><span class="p">(</span><span class="n">full_data</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 </pre></div>
 
@@ -342,36 +336,35 @@ Run the code cell below to load our data and display the first few entries (pass
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>From a sample of the RMS Titanic data, we can see the various features present for each passenger on the ship:</p>
+<p>These are the various features of the passengers on the ship:</p>
 <ul>
-<li><strong>Survived</strong>: Outcome of survival (0 = No; 1 = Yes)</li>
-<li><strong>Pclass</strong>: Socio-economic class (1 = Upper class; 2 = Middle class; 3 = Lower class)</li>
-<li><strong>Name</strong>: Name of passenger</li>
-<li><strong>Sex</strong>: Sex of the passenger</li>
-<li><strong>Age</strong>: Age of the passenger (Some entries contain <code>NaN</code>)</li>
-<li><strong>SibSp</strong>: Number of siblings and spouses of the passenger aboard</li>
-<li><strong>Parch</strong>: Number of parents and children of the passenger aboard</li>
+<li><strong>Survived</strong>: Outcome of survival (0 = Deceased; 1 =  Survived)</li>
+<li><strong>Pclass</strong>: Socio-Economic class (1 = Upper Class; 2 = Middle Class; 3 = Lower Class)</li>
+<li><strong>Name</strong>: Passenger Name</li>
+<li><strong>Sex</strong>: Sex of the Passenger</li>
+<li><strong>Age</strong>: Age of the Passenger</li>
+<li><strong>SibSp</strong>: Number of siblings/spouses of the passenger aboard</li>
+<li><strong>Parch</strong>: Number of parents/children of the passenger aboard</li>
 <li><strong>Ticket</strong>: Ticket number of the passenger</li>
 <li><strong>Fare</strong>: Fare paid by the passenger</li>
-<li><strong>Cabin</strong> Cabin number of the passenger (Some entries contain <code>NaN</code>)</li>
-<li><strong>Embarked</strong>: Port of embarkation of the passenger (C = Cherbourg; Q = Queenstown; S = Southampton)</li>
+<li><strong>Cabin</strong>: Cabin number of the passenger (nullable)</li>
+<li><strong>Embarked</strong>: Port the passenger left at (C=Cherbourg; Q=Queenstown; S=Southampton)</li>
 </ul>
-<p>Since we're interested in the outcome of survival for each passenger or crew member, we can remove the <strong>Survived</strong> feature from this dataset and store it as its own separate variable <code>outcomes</code>. We will use these outcomes as our prediction targets.<br>
-Run the code cell below to remove <strong>Survived</strong> as a feature of the dataset and store it in <code>outcomes</code>.</p>
+<p>We are looking to discover the outcome of survival for the passengers so we will remove the "Survived" feature from the dataset as the variable "outcomes"as a prediction target instead. We do this below.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[52]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Store the &#39;Survived&#39; feature in a new variable and remove it from the dataset</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#Store the &#39;Survived feature in a new variable and remove it from the dataset</span>
 <span class="n">outcomes</span> <span class="o">=</span> <span class="n">full_data</span><span class="p">[</span><span class="s1">&#39;Survived&#39;</span><span class="p">]</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">full_data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;Survived&#39;</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
 
-<span class="c1"># Show the new dataset with &#39;Survived&#39; removed</span>
+<span class="c1">#Show new dataset with &#39;Survived&#39; removed</span>
 <span class="n">display</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 </pre></div>
 
@@ -486,36 +479,24 @@ Run the code cell below to remove <strong>Survived</strong> as a feature of the 
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The very same sample of the RMS Titanic data now shows the <strong>Survived</strong> feature removed from the DataFrame. Note that <code>data</code> (the passenger data) and <code>outcomes</code> (the outcomes of survival) are now <em>paired</em>. That means for any passenger <code>data.loc[i]</code>, they have the survival outcome <code>outcomes[i]</code>.</p>
-<p>To measure the performance of our predictions, we need a metric to score our predictions against the true outcomes of survival. Since we are interested in how <em>accurate</em> our predictions are, we will calculate the proportion of passengers where our prediction of their survival is correct. Run the code cell below to create our <code>accuracy_score</code> function and test a prediction on the first five passengers.</p>
-<p><strong>Think:</strong> <em>Out of the first five passengers, if we predict that all of them survived, what would you expect the accuracy of our predictions to be?</em></p>
-
-</div>
-</div>
-</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[53]:</div>
+<div class="prompt input_prompt">In&nbsp;[266]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="k">def</span> <span class="nf">accuracy_score</span><span class="p">(</span><span class="n">truth</span><span class="p">,</span> <span class="n">pred</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Returns accuracy score for input truth and predictions. &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Returns accuracy score for input truth and predictions&quot;&quot;&quot;</span>
     
-    <span class="c1"># Ensure that the number of predictions matches number of outcomes</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">truth</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">pred</span><span class="p">):</span> 
+    <span class="c1">#Ensure that the number of predictions matches number of outcomes</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">truth</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">pred</span><span class="p">):</span>
         
-        <span class="c1"># Calculate and return the accuracy as a percent</span>
+        <span class="c1">#Calulate and return accuracy as a percent</span>
         <span class="k">return</span> <span class="s2">&quot;Predictions have an accuracy of {:.2f}%.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">((</span><span class="n">truth</span> <span class="o">==</span> <span class="n">pred</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span>
     
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;Number of predictions does not match number of outcomes!&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;Number of predictions do not match number of outcomes!&quot;</span>
     
-<span class="c1"># Test the &#39;accuracy_score&#39; function</span>
+<span class="c1">#Test the accuracy_score function</span>
 <span class="n">predictions</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">int</span><span class="p">))</span>
 <span class="k">print</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">outcomes</span><span class="p">[:</span><span class="mi">5</span><span class="p">],</span> <span class="n">predictions</span><span class="p">)</span>
 </pre></div>
@@ -544,32 +525,29 @@ Run the code cell below to remove <strong>Survived</strong> as a feature of the 
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<blockquote><p><strong>Tip:</strong> If you save an iPython Notebook, the output from running code blocks will also be saved. However, the state of your workspace will be reset once a new session is started. Make sure that you run all of the code blocks from your previous session to reestablish variables and functions before picking up where you last left off.</p>
-</blockquote>
-<h1 id="Making-Predictions">Making Predictions<a class="anchor-link" href="#Making-Predictions">&#182;</a></h1><p>If we were asked to make a prediction about any passenger aboard the RMS Titanic whom we knew nothing about, then the best prediction we could make would be that they did not survive. This is because we can assume that a majority of the passengers (more than 50%) did not survive the ship sinking.<br>
-The <code>predictions_0</code> function below will always predict that a passenger did not survive.</p>
+<h2 id="Making-Predictions">Making Predictions<a class="anchor-link" href="#Making-Predictions">&#182;</a></h2><p>The goal is the create an algorithm that will predict the outcome of any passenger about the Titanic whom we knew nothing about. The best assumption is that they didn't survive since more than 50% did not survive. <code>predictions_0</code> will always predict the survivor did not survive.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[54]:</div>
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="k">def</span> <span class="nf">predictions_0</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Model with no features. Always predicts a passenger did not survive. &quot;&quot;&quot;</span>
-
+    <span class="sd">&quot;&quot;&quot;Model with no features. Always predicts a passenger did not survive&quot;&quot;&quot;</span>
+    
     <span class="n">predictions</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">passenger</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
         
-        <span class="c1"># Predict the survival of &#39;passenger&#39;</span>
+        <span class="c1">#predict the survival of &#39;passenger&#39;</span>
         <span class="n">predictions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    
-    <span class="c1"># Return our predictions</span>
+        
+    <span class="c1">#return our predictions</span>
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
 
-<span class="c1"># Make the predictions</span>
+<span class="c1">#make the predictions</span>
 <span class="n">predictions</span> <span class="o">=</span> <span class="n">predictions_0</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 
@@ -583,15 +561,14 @@ The <code>predictions_0</code> function below will always predict that a passeng
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Question-1">Question 1<a class="anchor-link" href="#Question-1">&#182;</a></h3><p><em>Using the RMS Titanic data, how accurate would a prediction be that none of the passengers survived?</em><br>
-<strong>Hint:</strong> Run the code cell below to see the accuracy of this prediction.</p>
+<h3 id="Question-1">Question 1<a class="anchor-link" href="#Question-1">&#182;</a></h3><p><em>Using the RMS Titanic data, how accurate would a prediction be that none of the passengers survived?</em></p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[55]:</div>
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">outcomes</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
@@ -621,7 +598,7 @@ The <code>predictions_0</code> function below will always predict that a passeng
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Predictions have an accuracy of 61.62%</p>
+<h3 id="Question-2">Question 2<a class="anchor-link" href="#Question-2">&#182;</a></h3><p><em>How accurate would a prediction be that all female passengers survived and the remaining passengers did not survive?</em></p>
 
 </div>
 </div>
@@ -640,7 +617,7 @@ Run the code cell below to plot the survival outcomes of passengers based on the
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[56]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">vs</span><span class="o">.</span><span class="n">survival_stats</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">outcomes</span><span class="p">,</span> <span class="s1">&#39;Sex&#39;</span><span class="p">)</span>
@@ -899,7 +876,7 @@ Fill in the missing code below so that the function will make this prediction.<b
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[57]:</div>
+<div class="prompt input_prompt">In&nbsp;[31]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="k">def</span> <span class="nf">predictions_1</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
@@ -909,12 +886,10 @@ Fill in the missing code below so that the function will make this prediction.<b
     <span class="n">predictions</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">passenger</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
         
-        <span class="k">if</span><span class="p">(</span><span class="n">passenger</span><span class="p">[</span><span class="s1">&#39;Sex&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;female&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">passenger</span><span class="p">[</span><span class="s1">&#39;Sex&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;female&#39;</span><span class="p">):</span>
             <span class="n">predictions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-
         <span class="k">else</span><span class="p">:</span>
             <span class="n">predictions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        
     
     <span class="c1"># Return our predictions</span>
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
@@ -941,7 +916,7 @@ Fill in the missing code below so that the function will make this prediction.<b
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[58]:</div>
+<div class="prompt input_prompt">In&nbsp;[32]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">outcomes</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
@@ -971,16 +946,6 @@ Fill in the missing code below so that the function will make this prediction.<b
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Predictions have an accuracy of 78.68%</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <hr>
 <p>Using just the <strong>Sex</strong> feature for each passenger, we are able to increase the accuracy of our predictions by a significant margin. Now, let's consider using an additional feature to see if we can further improve our predictions. For example, consider all of the male passengers aboard the RMS Titanic: Can we find a subset of those passengers that had a higher rate of survival? Let's start by looking at the <strong>Age</strong> of each male, by again using the <code>survival_stats</code> function. This time, we'll use a fourth parameter to filter out the data so that only passengers with the <strong>Sex</strong> 'male' will be included.<br>
 Run the code cell below to plot the survival outcomes of male passengers based on their age.</p>
@@ -990,7 +955,7 @@ Run the code cell below to plot the survival outcomes of male passengers based o
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[59]:</div>
+<div class="prompt input_prompt">In&nbsp;[209]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">vs</span><span class="o">.</span><span class="n">survival_stats</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">outcomes</span><span class="p">,</span> <span class="s1">&#39;Age&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Sex == &#39;male&#39;&quot;</span><span class="p">])</span>
@@ -1260,15 +1225,14 @@ TkSuQmCC
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Examining the survival statistics, the majority of males younger than 10 survived the ship sinking, whereas most males age 10 or older <em>did not survive</em> the ship sinking. Let's continue to build on our previous prediction: If a passenger was female, then we will predict they survive. If a passenger was male and younger than 10, then we will also predict they survive. Otherwise, we will predict they do not survive.<br>
-Fill in the missing code below so that the function will make this prediction.<br>
-<strong>Hint:</strong> You can start your implementation of this function using the prediction code you wrote earlier from <code>predictions_1</code>.</p>
+Fill in the missing code below so that the function will make this prediction.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[60]:</div>
+<div class="prompt input_prompt">In&nbsp;[210]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="k">def</span> <span class="nf">predictions_2</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
@@ -1278,16 +1242,13 @@ Fill in the missing code below so that the function will make this prediction.<b
     
     <span class="n">predictions</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">passenger</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-        
+            
         <span class="k">if</span><span class="p">(</span><span class="n">passenger</span><span class="p">[</span><span class="s1">&#39;Sex&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;female&#39;</span><span class="p">):</span>
             <span class="n">predictions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-            
         <span class="k">elif</span><span class="p">(</span><span class="n">passenger</span><span class="p">[</span><span class="s1">&#39;Age&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="ow">and</span> <span class="n">passenger</span><span class="p">[</span><span class="s1">&#39;Sex&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;male&#39;</span><span class="p">):</span>
             <span class="n">predictions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-            
         <span class="k">else</span><span class="p">:</span>
             <span class="n">predictions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-            
     
     <span class="c1"># Return our predictions</span>
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
@@ -1314,7 +1275,7 @@ Fill in the missing code below so that the function will make this prediction.<b
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[61]:</div>
+<div class="prompt input_prompt">In&nbsp;[211]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">outcomes</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
@@ -1344,31 +1305,20 @@ Fill in the missing code below so that the function will make this prediction.<b
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Predictions have an accuracy of 79.35%</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<hr>
-<p>Adding the feature <strong>Age</strong> as a condition in conjunction with <strong>Sex</strong> improves the accuracy by a small margin more than with simply using the feature <strong>Sex</strong> alone. Now it's your turn: Find a series of features and conditions to split the data on to obtain an outcome prediction accuracy of at least 80%. This may require multiple features and multiple levels of conditional statements to succeed. You can use the same feature multiple times with different conditions.<br>
-<strong>Pclass</strong>, <strong>Sex</strong>, <strong>Age</strong>, <strong>SibSp</strong>, and <strong>Parch</strong> are some suggested features to try.</p>
-<p>Use the <code>survival_stats</code> function below to to examine various survival statistics.<br>
-<strong>Hint:</strong> To use multiple filter conditions, put each condition in the list passed as the last argument. Example: <code>["Sex == 'male'", "Age &lt; 18"]</code></p>
+<p>Adding the feature Age as a condition in conjunction with Sex improves the accuracy by a small margin more than with simply using the feature Sex alone. Now it's your turn: Find a series of features and conditions to split the data on to obtain an outcome prediction accuracy of at least 80%. This may require multiple features and multiple levels of conditional statements to succeed. You can use the same feature multiple times with different conditions.
+Pclass, Sex, Age, SibSp, and Parch are some suggested features to try.
+Use the survival_stats function below to to examine various survival statistics.
+Hint: To use mulitple filter conditions, put each condition in the list passed as the last argument. Example: ["Sex == 'male'", "Age &lt; 18"]</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[62]:</div>
+<div class="prompt input_prompt">In&nbsp;[261]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">vs</span><span class="o">.</span><span class="n">survival_stats</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">outcomes</span><span class="p">,</span> <span class="s1">&#39;Age&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Sex == &#39;male&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;Age &lt; 18&quot;</span><span class="p">])</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">vs</span><span class="o">.</span><span class="n">survival_stats</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">outcomes</span><span class="p">,</span> <span class="s1">&#39;Pclass&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Sex == &#39;female&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;Age &gt; 40&quot;</span><span class="p">])</span>
 </pre></div>
 
 </div>
@@ -1383,212 +1333,210 @@ Fill in the missing code below so that the function will make this prediction.<b
 
 
 <div class="output_png output_subarea ">
-<img src="data:image/png;base64,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
-OuggfvGLX3DFFVfwyCOPAHDcccdx2mmntd7/Bz/4AcOGDWP48OFcfvnlnfbIx48fz2mnncbuu+/O
-RhttxP77789zzz3XOn369OnstNNODBkyhL322ovHHnsMgKOPPpo5c+YwYcIENtpoI6ZMmbJK20uW
-LGHChAkMHjyYTTfdlD333LN1WtvN/bWP4bbbbmPEiBF8//vfZ8stt+TTn/40o0aN4oYbbmi9//Ll
-y9lss824//77efrpp+nXrx8rVqzg6quvZpdddlmpjvPPP59DDz0UgDfeeIMTTzyRkSNHsuWWW/LF
-L36R119/vYtXYPUZ5JKkVrvssgvDhw/njjvuWGXajTfeyHnnncfNN9/M448/zk033dRle9OmTeOK
-K65g8eLFvP76662hPGvWLCZPnsyPfvQjFi9ezAEHHMBBBx3EW2+9xc9+9jO23nprrrvuOl588UVO
-PPHEVdr94Q9/yIgRI1iyZAmLFi3inHPOaZ3W1eb+Z555hueff545c+Zw6aWXMnnyZKZOnbrS4xw6
-dCijR49eqb0JEyYwa9Ys/vKXv6z0+I488kgATjrpJJ544gkefPBBnnjiCebNm8dZZ53V5XO0ugxy
-SdJKhg0btlLPucU111zDcccdx/vf/37WX3/9un4q9bjjjmP77bdn3XXXZeLEidx///0AXH311Rx0
-0EHstdde9O/fnxNPPJFXX32V3//+963zdrbZfuDAgSxYsICnnnqK/v37M3bs2LrmA+jfvz9nnnkm
-AwcOZN1112XSpElMnz6d1157DSjCedKkSavMt/7663PIIYcwbdo0AB5//HEee+wxDj74YAB+/OMf
-c/7557Pxxhuz4YYbcvLJJ7fet5EMcknSSubNm8eQIUNWGT9//nxGjBjROjxy5MguQ3OLLbZovb3B
-Bhvw0ksvtbY1suZYgYhgxIgRzJs3r64av/nNb7L99tuz77778p73vIdzzz23rvkAhg4dysCBA1uH
-t99+e0aNGsWMGTN49dVXmT59OpMnT2533kmTJrWG89SpUzn00ENZd911Wbx4Ma+88gof+chHGDJk
-CEOGDOGAAw5gyZIlddfVUx7sJklq9Yc//IH58+ezxx57rDJtyy23ZO7cua3DTz/9dI+PWh82bBgP
-PfTQSuPmzp3L8OHDga43j2+44YZMmTKFKVOm8MgjjzB+/Hh23XVXxo8fzwYbbMArr7zSet9nnnlm
-pS8g7bV9xBFHMHXqVJYvX86OO+7Idttt1+5y99lnHxYvXswDDzzAVVddxQUXXADAu9/9bjbYYAMe
-fvhhttxyy/qehDXEHrkkiWXLlnHdddcxadIkjjrqKEaNGrXKfSZOnMi//du/8eijj/LKK6+s1v7f
-iRMncv3113PLLbfw1ltvMWXKFNZbbz122203oOjJd3Z++vXXX9+6r3rQoEEMGDCAfv2KSBs9ejRT
-p05lxYoV3Hjjjdx2221d1nPEEUcwc+ZMLr744lV647VbHQYMGMBhhx3GN77xDZYuXco+++wDFF8O
-PvvZz3LCCSewePFioNiyMXPmzG48Kz1jkEvSWmzChAlsvPHGbL311nz3u9/lxBNPXOnUs9re6/77
-788JJ5zAXnvtxQ477MDHP/7xTtvurFe9ww478POf/5wvf/nLDB06lOuvv54ZM2YwYECxofjkk0/m
-7LPPZsiQIZx33nmrzP/444+z9957M2jQIMaOHcuXvvSl1iPXL7zwQqZPn87gwYOZNm0af//3f9/l
-87DFFluw2267cffdd3P44Yd3+jgmTZrEzTffzMSJE1u/PACce+65vOc97+GjH/0om2yyCfvuuy+z
-Zs3qctmry98jl6QGGjNmzEq/ftaXLgij5mn7vmjh75FLUh9nyGpNc9O6JEkVZpBLklRhBrkkSRVm
-kEuSVGEGuSRJFWaQS5JUYQa5JEkVZpBLkhruC1/4At/5znfWeLtnnnkmRx111Bpvt0q8IIwk9aLj
-//fxzJ4/u2HtbzNsG/71/PovOnPnnXdy0kkn8fDDDzNgwADe//73c8EFF/CRj3xkjdZ18cUXr9H2
-avX0h1veKQxySepFs+fPZuSnRnZ9x562//PZdd932bJlTJgwgUsuuYTDDjuMN954gzvuuIN11123
-28vNzLU+UJvFTeuStJaaNWsWEcHEiROJCNZdd1323ntvdtppp1U2WT/99NP069ePFStWADB+/HhO
-PfVUdt99dzbccEN+8IMfsMsuu6zU/vnnn8+hhx4KwHHHHcdpp50GwKhRo7jhhhta77d8+XI222wz
-7r//fgDuvvtuxo4dy+DBg/nQhz600q+XzZ49m3HjxrHxxhuz33778eyzzzbmyakQg1yS1lI77LAD
-/fv359hjj+XGG2/k+eefX2l62x522+Gf//zn/OQnP2HZsmUcf/zxzJo1q/WnRQGmTZvGkUceucpy
-J02axNSpU1uHb7zxRoYOHcro0aOZN28eBx10EKeddhpLly5lypQpfPKTn2TJkiUATJ48mV122YVn
-n32WU089lSuuuGK1n4eqM8glaS01aNAg7rzzTvr168fnPvc5hg4dyqGHHsqiRYvqmv/YY4/lfe97
-H/369WOjjTbikEMOYdq0aUDxM6OPPfYYEyZMWGW+yZMnM336dF577TWgCPxJkyYBcOWVV3LggQey
-3377AfDxj3+cMWPGcMMNNzB37lzuvfdezjrrLAYOHMgee+zRbvtrG4NcktZi733ve/npT3/KnDlz
-ePjhh5k/fz4nnHBCXfOOGDFipeFJkya1BvnUqVM59NBDWW+99VaZb/vtt2fUqFHMmDGDV199lenT
-p7f23J9++mmuvvpqhgwZwpAhQxg8eDB33XUXCxYsYP78+QwePJj111+/ta2RIxt3vEFVeLCbJAko
-NrUfc8wxXHrppXzkIx/hlVdeaZ22YMGCVe7fdlP7Pvvsw+LFi3nggQe46qqruOCCCzpc1hFHHMHU
-qVNZvnw5O+64I9tuuy1QfDk4+uijueSSS1aZZ86cOSxdupRXX321NcznzJlDv35rd5907X70krQW
-e+yxxzjvvPOYN28eAHPnzmXatGnstttufPCDH+T2229n7ty5vPDCC3zve9/rsr0BAwZw2GGH8Y1v
-fIOlS5eyzz77dHjfI444gpkzZ3LxxRczefLk1vGf+tSnmDFjBjNnzmTFihW89tpr3HbbbcyfP5+t
-t96aMWPGcPrpp/Pmm29y5513MmPGjNV/IirOIJektdSgQYO45557+Ju/+RsGDRrExz72MXbeeWem
-TJnC3nvvzeGHH87OO+/MLrvsssq+6I5ONZs0aRI333wzEydOXKmn3Pb+W2yxBbvttht33303hx9+
-eOv44cOHc+2113LOOecwdOhQRo4cyZQpU1qPlr/yyiu5++672XTTTTn77LM55phj1tTTUVmRmc2u
-oUMRkX25Pumd6pTjj2fJ7NnNLuMd4T8feYRbbrqpdfiU757GX5+d17DlDX/3VpzzrbMa1r7WjPF7
-780+o0atMv7S3/6WzOzWCfnuI5e0iiWzZ3OJBxGtEWNmzWJkzQVWrjzj3CZWo75iyIAB7a5jl/ag
-LTetS5JUYQa5JEkVZpBLklRhBrkkSRVmkEuSVGEGuSRJFebpZ5LUQFuusw5jxo9vdhnqY7ZcZ501
-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
-On8+t86fv1ptNCXII2IDoF9mvhQRGwL7Ame2d98xY4f2am2SJPWWccOGMW7YsNbhM++7r9ttNKtH
-vjnwq4jIsoYrM3Nmk2qRJKmymhLkmfkUMLoZy5Yk6Z3E078kSaowg1ySpAozyCVJqjCDXJKkCjPI
-JUmqMINckqQKM8glSaowg1ySpAozyCVJqrBm/vqZpD7qmVeXsf9dNzS7DEl1MMglreKNAcsZ+Xfv
-anYZ0trn4e7P4qZ1SZIqzCCXJKnCDHJJkirMIJckqcIMckmSKswglySpwgxySZIqzCCXJKnCDHJJ
-kirMIJckqcIMckmSKswglySpwgxySZIqzCCXJKnCDHJJkirMIJckqcIMckmSKswglySpwgxySZIq
-zCCXJKnCDHJJkirMIJckqcIMckmSKswglySpwgxySZIqzCCXJKnCDHJJkirMIJckqcIMckmSKswg
-lySpwgxySZIqzCCXJKnCDHJJkirMIJckqcIMckmSKswglySpwgxySZIqzCCXJKnCDHJJkirMIJck
-qcIMckmSKswglySpwgxySZIqzCCXJKnCDHJJkirMIJckqcIMckmSKqxpQR4R+0fEnyNiVkSc1Kw6
-JEmqsqYEeUT0A/4Z2A/YEZgUEe9rRi1qnPlzXm52Ceqh5W+saHYJWg2ue2uXZvXIdwUez8ynM/NN
-4CrgkCbVogaZP/eVZpegHlr+Rja7BK0G1721S7OCfCtgbs3wX8txkiSpGwY0u4Cu/P6u55pdgnpo
-4ZxXeQNfv6p55dU3iWYXIalukdn7m9Ai4qPAGZm5fzl8MpCZeW6b+7l9T5K0VsnMbn2XblaQ9wce
-Az4OLAD+G5iUmY/2ejGSJFVYUzatZ+byiPgyMJNiP/1lhrgkSd3XlB65JElaM/rkld28WEy1RcTs
-iHggIv4YEf/d7HrUuYi4LCIWRsSDNeMGR8TMiHgsIn4bERs3s0Z1rIPX7/SI+GtE3Ff+7d/MGtW+
-iBgeEb+LiIcj4k8R8ZVyfLfWvz4X5F4s5h1hBTAuMz+Umbs2uxh16XKK9a3WycBNmfle4HfAt3q9
-KtWrvdcP4LzM/HD5d2NvF6W6vAV8LTN3BHYDvlTmXbfWvz4X5HixmHeCoG++t9SOzLwTWNpm9CHA
-FeXtK4BDe7Uo1a2D1w/wLMK+LjOfycz7y9svAY8Cw+nm+tcXP2y9WEz1JfCfEfGHiPhss4tRj2yW
-mQuh+LABNmtyPeq+L0fE/RHxE3eN9H0RsQ0wGrgb2Lw7619fDHJV39jM/DDwdxSbinZvdkFabR4V
-Wy0XAdtl5mjgGeC8JtejTkTEu4BfAl8te+Zt17dO17++GOTzgK1rhoeX41QRmbmg/L8Y+BXF7hJV
-y8KI2BwgIrYAFjW5HnVDZi7Ot09J+jGwSzPrUcciYgBFiP97Zl5bju7W+tcXg/wPwHsiYmRErAMc
-AUxvck2qU0RsUH67JCI2BPYFHmpuVapDsPI+1enAseXtY4Br286gPmWl16/88G/xCVwH+7KfAo9k
-5oU147q1/vXJ88jLUyUu5O2LxXyvySWpThGxLUUvPCkuOHSlr1/fFhFTgXHApsBC4HTg18A1wAjg
-aWBiZj7frBrVsQ5ev/EU+1tXALOBz7fsc1XfERFjgduBP1F8ZiZwCsXVTq+mzvWvTwa5JEmqT1/c
-tC5JkupkkEuSVGEGuSRJFWaQS5JUYQa5JEkVZpBLklRhBrm0loqIQyNiRUTs0OxaJPWcQS6tvY4A
-7gAmNbsQST1nkEtrofLyuWOBz1AGeRQuiohHIuK3EXF9RHyinPbhiLi1/EW737RcB1pS8xnk0trp
-EODGzHwCeDYiPkRxTe6tM3MUcDSwG7T+qMP/AT6ZmbsAlwPnNKdsSW0NaHYBkppiEnBBefsXwGSK
-z4NrADJzYUTcUk5/L7ATxW/MB0UHYH7vliupIwa5tJaJiMHAXsBOEZFAf4ofa/hVR7MAD2Xm2F4q
-UVI3uGldWvscBvwsM7fNzO0ycyTwFLAU+GS5r3xzil/UAngMGBoRH4ViU3tEjGpG4ZJWZZBLa5/D
-WbX3/R/A5sBfgYeBnwH/A7yQmW8C/wCcGxH3A3+k3H8uqfn8GVNJrSJiw8x8OSKGAPcAYzNzUbPr
-ktQx95FLqnVdRGwCDATOMsSlvs8euSRJFeY+ckmSKswglySpwgxySZIqzCCXJKnCDHJJkirMIJck
-qcL+H6BaeF38JsnCAAAAAElFTkSuQmCC
+<img src="data:image/png;base64,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
+4blz565x7+ktt9ySv/71r23GzZ8/n5EjRwLd79becMMNmTp1KlOnTuXee+9l7733ZrfddmPvvfdm
+0KBBLF++vHXeRYsWtfmi0dG6jzrqKKZPn86KFSvYeeed2W677Trc7n777ceSJUu46667uOyyy/j2
+t78NwGabbcagQYO45557GDFiRH0PwmqyhS1JYtmyZVx11VVMmjSJY445hp122mmVeSZOnMh///d/
+c99997F8+fK1Oj47ceJErr76am644QZee+01pk6dyvrrr8/uu+8OFC3zrs7vvvrqq1uPJQ8ePJgB
+AwbQr18RabvuuivTp09n5cqVXHvttdx4443d1nPUUUcxe/ZsLrroolVa17V7EQYMGMARRxzBKaec
+wtKlS9lvv/2A4kvAxz72MU466SSWLFkCFHsqZs+evRqPStcMbEnqwyZMmMDGG2/M1ltvzde//nVO
+PvlkfvCDH7ROr22NHnjggZx00knss88+7Ljjjnzwgx/sct1dtZJ33HFHfvKTn/DpT3+aYcOGcfXV
+VzNr1iwGDCh2/J522mmcffbZDB06lPPPP3+V5R988EH23XdfBg8ezLhx4/jUpz7V2lP8O9/5DjNn
+zmTIkCHMmDGDf/qnf+r2cRg+fDi77747t956K0ceeWSX92PSpElcd911TJw4sfVLAsC5557LDjvs
+wPve9z422WQT9t9/fx544IFut10vr4fdi3k97L773OuNY8yYMW2u1rXN8OGrda706hq9xRY8tmhR
+w9avdaP966KF18OWpF7CMNWacpe4JEkVYGBLklQBBrYkSRVgYEuSVAEGtiRJFWBgS5JUAQa2JEkV
+YGBLkhruxBNP5Jxzzlnn6/3qV7/KMcccs87X2xsZ2JLUg4aPHE5ENOxv+Mjh3RdR45ZbbmHcuHFs
+sskmbLbZZuy555786U9/Wuf3+6KLLuLLX/7yOl8vdH+hkDcKf+lMknrQ4gWLG/qTw4un1P+zp8uW
+LWPChAlcfPHFHHHEEbzyyivcfPPNDBw4cLW3m5l9JjibxRa2JPVRDzzwABHBxIkTiQgGDhzIvvvu
+y9vf/vZVdjXPnTuXfv36sXLlSgD23ntvTj/9dPbYYw823HBDzjvvPMaOHdtm/RdccAGHH344ACec
+cAJnnHEGADvttBPXXHNN63wrVqxg880358477wTg1ltvZdy4cQwZMoR3vetdba629dhjjzF+/Hg2
+3nhjDjjgAJ588snGPDi9kIEtSX3UjjvuSP/+/Tn++OO59tpreeaZZ9pMb99ibj/8k5/8hP/6r/9i
+2bJlfOITn+CBBx5oveQlwIwZMzj66KNX2e6kSZOYPn166/C1117LsGHD2HXXXVmwYAGHHHIIZ5xx
+BkuXLmXq1Kn88z//M0899RQAkydPZuzYsTz55JOcfvrpTJs2ba0fh6owsCWpjxo8eDC33HIL/fr1
+4+Mf/zjDhg3j8MMP54knnqhr+eOPP563vvWt9OvXj4022ojDDjuMGTNmAMXlL++//34mTJiwynKT
+J09m5syZvPTSS0AR7JMmTQLg0ksv5eCDD+aAAw4A4IMf/CBjxozhmmuuYf78+dx+++2cddZZrLfe
+euy5554drv+NysCWpD7sLW95Cz/4wQ+YN28e99xzD48//jgnnXRSXcuOGjWqzfCkSZNaA3v69Okc
+fvjhrL/++qsst/3227PTTjsxa9YsXnzxRWbOnNnaEp87dy6XX345Q4cOZejQoQwZMoTf/va3LFy4
+kMcff5whQ4awwQYbtK5r9OjRa3rXK8dOZ5IkoNhFftxxx3HJJZfwnve8h+XLl7dOW7hw4Srzt99F
+vt9++7FkyRLuuusuLrvsMr797W93uq2jjjqK6dOns2LFCnbeeWe23XZboPgScOyxx3LxxRevssy8
+efNYunQpL774Ymtoz5s3j379+kbbs2/cS0nSKu6//37OP/98FixYAMD8+fOZMWMGu+++O+985zu5
+6aabmD9/Ps8++yzf+MY3ul3fgAEDOOKIIzjllFNYunQp++23X6fzHnXUUcyePZuLLrqIyZMnt47/
+8Ic/zKxZs5g9ezYrV67kpZde4sYbb+Txxx9n6623ZsyYMZx55pm8+uqr3HLLLcyaNWvtH4iKMLAl
+qY8aPHgwt912G+9973sZPHgw73//+9lll12YOnUq++67L0ceeSS77LILY8eOXeVYcWencE2aNInr
+rruOiRMntmn5tp9/+PDh7L777tx6660ceeSRreNHjhzJlVdeyde+9jWGDRvG6NGjmTp1amvv9Esv
+vZRbb72VTTfdlLPPPpvjjjtuXT0cvV5kZrNr6FREZG+ur9EioqHna/ZqU4rzOqWqGzNmDLfffnvr
+8PCRw4tzsRtki622YNHfFzVs/Vo32r8uWkQEmdnhtyGPYUtSDzJMtabcJS5JUgUY2JIkVYCBLUlS
+BRjYkiRVgIEtSVIFGNiSJFWAp3VJUgONGDGCMWPGNLsM9TIjRoxY7WUMbElqoL7005lqLHeJS5JU
+AQa2JEkVYGBLklQBBrYkSRVgYEuSVAEGtiRJFWBgS5JUAQa2JEkVYGBLklQBBrYkSRVgYEuSVAEG
+tiRJFdDQwI6IkRFxfUTcExF/iYjPlOOHRMTsiLg/In4VERs3sg5Jkqqu0S3s14DPZebOwO7ApyLi
+rcBpwG8y8y3A9cAXG1yHJEmV1tDAzsxFmXlneft54D5gJHAYMK2cbRpweCPrkCSp6nrsGHZEbAPs
+CtwKbJGZi6EIdWDznqpDkqQq6pHAjog3Az8DPlu2tLPdLO2HJUlSjQGN3kBEDKAI6x9n5pXl6MUR
+sUVmLo6I4cATnS0/ZcqU1tvjx49n/PjxDaxWkqSeM2fOHObMmVPXvJHZ2MZtRPwIeDIzP1cz7lzg
+6cw8NyJOBYZk5mkdLJuNrq83iwiY0uwqmmQK9OXnXlLfFBFkZnQ0raEt7IgYBxwN/CUi7qDY9f0l
+4Fzg8oj4CDAXmNjIOiRJqrqGBnZm/hbo38nkfRu5bUmS3kj8pTNJkirAwJYkqQIMbEmSKsDAliSp
+AgxsSZIqwMCWJKkCDGxJkirAwJYkqQIMbEmSKsDAliSpAgxsSZIqwMCWJKkCDGxJkirAwJYkqQIM
+bEmSKsDAliSpAgxsSZIqwMCWJKkCDGxJkirAwJYkqQIMbEmSKsDAliSpAgxsSZIqwMCWJKkCDGxJ
+kirAwJYkqQIMbEmSKsDAliSpAgxsSZIqwMCWJKkCDGxJkirAwJYkqQIMbEmSKsDAliSpAgxsSZIq
+wMCWJKkCDGxJkirAwJYkqQIMbEmSKsDAliSpAgxsSZIqoNvAjogNI6JfeXvHiDg0ItZrfGmSJKlF
+PS3sm4D1I2IrYDZwDPDfjSxKkiS1VU9gR2YuBz4EXJiZRwA7N7YsSZJUq67AjojdgaOBq8tx/RtX
+kiRJaq+ewP4s8EXg55l5T0RsB9zQ2LIkSVKtAV1NjIj+wKGZeWjLuMx8BPhMowuTJEmv67KFnZkr
+gD16qBZJktSJLlvYpTsiYiZwBfBCy8jM/J+GVSVJktqoJ7DXB54C9qkZl4CBLUlSD+k2sDPzhJ4o
+RJIkda6eXzrbMSKui4i/lsO7RMTpjS9NkiS1qOe0ru9RnNb1KkBm3g0c1ciiJElSW/UE9qDM/EO7
+ca81ohhJktSxegL7yYjYnqKjGRHxL8DChlYlSZLaqKeX+KeAS4C3RsQC4FHgww2tSpIktVFPL/FH
+gH0jYkOgX2Yua3xZkiSpVreBHRGfazcM8Czwp8y8s0F1SZKkGvUcwx4DfALYqvz7N+BA4HsR8YWu
+FoyI70fE4oi4u2bcmRHx94j4c/l34FrUL0lSn1BPYI8E3p2Zn8/MzwPvATYHPgAc382yPwQO6GD8
++Zn57vLv2tUpWJKkvqiewN4ceLlm+FVgi8x8sd34VWTmLcDSDiZF3RVKkqS6eolfCtwWEVeWwxOA
+6WUntHvXcLufjohjgNuBz2fms2u4HkmS+oRuW9iZeTbFcetnyr9PZOZZmflCZh69Btu8ENguM3cF
+FgHnr8E6JEnqU+ppYQP8GVjQMn9EbJ2Z89Zkg5m5pGbwe8CsruafMmVK6+3x48czfvz4NdmsJEm9
+zpw5c5gzZ05d80Zmdj1DxL8DZwKLgRUUx58zM3epawMR2wCzMvMd5fDwzFxU3v5fwNjMnNzJstld
+fW9kEQFTml1Fk0yBvvzcS+qbIoLM7LCfVz0t7M8Cb8nMp9Zgw9OB8cCmETGPIvj3johdgZXAYxS7
+2yVJUhfqCez5FD+Usto6aTn/cE3WJUlSX1ZPYD8CzImIq6k5jSsz7SwmSVIPqSew55V/byr/JElS
+D6vn4h9fBYiIQZm5vPElSZKk9ro9Dzsido+Ie4G/lcPvjIgLG16ZJElqVc9Pk36b4vfAnwLIzLso
+fkdckiT1kHoCm8yc327UigbUIkmSOlHXaV0R8X4gI2I9ivOy72tsWZIkqVY9LexPAJ+iuBb2AmDX
+cliSJPWQenqJPwmsyUU+JEnSOlJPL/FvRsRGEbFeRFwXEUsi4sM9UZwkSSrUs0t8/8x8DjiE4re/
+dwBOaWRRkiSprXoCu2W3+cHAFZm5Rr8rLkmS1lw9vcSvioi/AS8CJ0bEMOClxpYlSZJqddvCzszT
+gPcDYzLzVeAF4LBGFyZJkl5XT6ezI4BXM3NFRJwO/ATYsuGVSZKkVvUcw/5KZi6LiD2AfYHvAxc1
+tixJklSrnsBu+RnSg4FLMvNqvMymJEk9qp7AXhARFwNHAtdExMA6l5MkSetIPcE7EfgVcEBmPgMM
+xfOwJUnqUfX0El+emf8DPBsRWwPrUV4bW5Ik9Yx6eokfGhEPAo8CN5b/f9nowiRJ0uvq2SV+NvA+
+4IHM3Jaip/itDa1KkiS1UU9gv5qZTwH9IqJfZt4AjGlwXZIkqUY9P036TES8GbgJuDQinqD4tTNJ
+ktRD6mmMQLVwAAAM1ElEQVRhHwYsB/4XcC3wMDChkUVJkqS2umxhR8ThFJfT/Etm/gqY1iNVSZKk
+NjptYUfEhRSt6k2BsyPiKz1WlSRJaqOrFvYHgHeWF/0YBNxM0WNckiT1sK6OYb+SmSug+PEUIHqm
+JEmS1F5XLey3RsTd5e0Ati+HA8jM3KXh1UmSJKDrwH5bj1UhSZK61GlgZ+bcnixEkiR1zstkSpJU
+AQa2JEkV0NV52NeV/8/tuXIkSVJHuup0NiIi3g8cGhGX0e60rsz8c0MrkyRJrboK7DOArwAjgfPb
+TUtgn0YVJUmS2uqql/jPgJ9FxFcy0184kySpibq9vGZmnh0Rh1L8VCnAnMy8qrFlSZKkWt32Eo+I
+rwOfBe4t/z4bEV9rdGGSJOl13bawgYOBXTNzJUBETAPuAL7UyMIkSdLr6j0Pe5Oa2xs3ohBJktS5
+elrYXwfuiIgbKE7t+gBwWkOrkiRJbdTT6WxGRMwBxpajTs3MRQ2tSpIktVFPC5vMXAjMbHAtkiSp
+E/6WuCRJFWBgS5JUAV0GdkT0j4i/9VQxkiSpY10GdmauAO6PiK17qB5JktSBejqdDQHuiYg/AC+0
+jMzMQxtWlaSmGj5yOIsXLG52GU2zxVZbsOjvngyj3qWewP5Kw6uQ1KssXrAYpjS7iuZZPKXvfllR
+71XPedg3RsRo4B8y8zcRMQjo3/jSJElSi3ou/vEx4GfAxeWorYBfNLIoSZLUVj2ndX0KGAc8B5CZ
+DwKbN7IoSZLUVj2B/XJmvtIyEBEDgGxcSZIkqb16AvvGiPgSsEFE7AdcAcxqbFmSJKlWPYF9GrAE
++Avwb8A1wOmNLEqSJLVVTy/xlRExDbiNYlf4/ZnpLnFJknpQPb3EDwYeBr4L/AfwUEQcVM/KI+L7
+EbE4Iu6uGTckImZHxP0R8auI2HhNi5ckqa+oZ5f4t4C9M3N8Zu4F7A1cUOf6fwgc0G7cacBvMvMt
+wPXAF+stVpKkvqqewF6WmQ/VDD8CLKtn5Zl5C7C03ejDgGnl7WnA4fWsS5KkvqzTY9gR8aHy5u0R
+cQ1wOcUx7COAP67FNjfPzMUAmbkoIjynW5KkbnTV6WxCze3FwF7l7SXABuuwBjuwSZLUjU4DOzNP
+aNA2F0fEFpm5OCKGA090NfOUKVNab48fP57x48c3qCxJknrWnDlzmDNnTl3zRndnaEXEtsC/A9tQ
+E/D1Xl4zIrYBZmXmO8rhc4GnM/PciDgVGJKZp3WybJ8+gywi+u4Vk6ZAX37um61Pv/bA15+aJiLI
+zOhoWj2X1/wF8H2KXzdbuZobng6MBzaNiHnAmcA3gCsi4iPAXGDi6qxTkqS+qJ7Afikzv7smK8/M
+yZ1M2ndN1idJUl9VT2B/JyLOBGYDL7eMzMw/N6wqSZLURj2B/Q7gGGAfXt8lnuWwJEnqAfUE9hHA
+drWX2JQkST2rnl86+yuwSaMLkSRJnaunhb0J8LeI+CNtj2HXdVqXJElae/UE9pkNr0KSJHWpnuth
+39gThUiSpM51G9gRsYzXf+/7TcB6wAuZuVEjC5MkSa+rp4U9uOV2RATF5THf18iiJElSW/X0Em+V
+hV8ABzSoHkmS1IF6dol/qGawHzAGeKlhFUmSpFXU00u89rrYrwGPUewWlyRJPaSeY9iNui62JEmq
+U6eBHRFndLFcZubZDahHkiR1oKsW9gsdjNsQ+CiwKWBgS5LUQzoN7Mz8VsvtiBgMfBY4AbgM+FZn
+y0mSpHWvy2PYETEU+BxwNDANeHdmLu2JwiRJ0uu6OoZ9HvAh4BLgHZn5fI9VJUmS2ujqh1M+D2wJ
+nA48HhHPlX/LIuK5nilPkiRB18ewV+tX0CRJUuMYypIkVYCBLUlSBRjYkiRVQD2/JS5J6kHbDB/O
+3MWLm11G04zeYgseW7So2WX0Oga2JPUycxcvJptdRBNFH/6y0hV3iUuSVAEGtiRJFWBgS5JUAQa2
+JEkVYGBLklQBBrYkSRVgYEuSVAEGtiRJFWBgS5JUAQa2JEkVYGBLklQBBrYkSRVgYEuSVAEGtiRJ
+FWBgS5JUAQa2JEkVYGBLklQBBrYkSRVgYEuSVAEGtiRJFWBgS5JUAQa2JEkVYGBLklQBBrYkSRVg
+YEuSVAEGtiRJFWBgS5JUAQa2JEkVYGBLklQBBrYkSRVgYEuSVAEGtiRJFWBgS5JUAQOateGIeAx4
+FlgJvJqZuzWrFkmSerumBTZFUI/PzKVNrEGSpEpo5i7xaPL2JUmqjGYGZgK/jog/RsTHmliHJEm9
+XjN3iY/LzIURMYwiuO/LzFuaWI8kSb1W0wI7MxeW/5dExM+B3YBVAnvKlCmtt8ePH8/48eN7qEJJ
+khprzpw5zJkzp655IzMbW01HG40YBPTLzOcjYkNgNvDVzJzdbr5sRn29RUTAlGZX0SRToC8/983W
+p1970PTXX0TQl1/9Qd99/0cEmRkdTWtWC3sL4OcRkWUNl7YPa0mS9LqmBHZmPgrs2oxtS5JURZ5W
+JUlSBRjYkiRVgIEtSVIFGNiSJFWAgS1JUgUY2JIkVYCBLUlSBRjYkiRVgIEtSVIFGNiSJFWAgS1J
+UgUY2JIkVYCBLUlSBRjYkiRVgIEtSVIFGNiSJFWAgS1JUgUY2JIkVYCBLUlSBRjYkiRVgIEtSVIF
+GNiSJFWAgS1JUgUY2JIkVYCBLUlSBRjYkiRVgIEtSVIFGNiSJFWAgS1JUgUY2JIkVYCBLUlSBRjY
+kiRVgIEtSVIFGNiSJFWAgS1JUgUY2JIkVcCAZhcg9UbbDB/O3MWLm12GJLUysKUOzF28mGx2EU0U
+zS5A0ircJS5JUgUY2JIkVYCBLUlSBRjYkiRVgIEtSVIFGNiSJFWAgS1JUgUY2JIkVYCBLUlSBRjY
+kiRVgIEtSVIF9PrfEo/wV40lqU/p72d/R3p9YHsBBknqY1YAU5pdRJNM6XySu8QlSaoAA1uSpAow
+sCVJqgADW5KkCjCwJUmqAANbkqQKMLAlSaqApgV2RBwYEX+LiAci4tRm1SFJUhU0JbAjoh/wH8AB
+wM7ApIh4azNqkSSpCprVwt4NeDAz52bmq8BlwGFNqkWSpF6vWYG9FTC/Zvjv5ThJktQBO51JklQB
+zbr4xwJg65rhkeW4VfT5C2BMaXYBzdPsq/X42mt2Ac3l66/JpjS7gN4nMnv+elgR0R+4H/ggsBD4
+AzApM+/r8WIkSaqAprSwM3NFRHwamE2xW/77hrUkSZ1rSgtbkiStHjud9UIR8f2IWBwRdze7FvUt
+ETEyIq6PiHsi4i8R8Zlm16S+ISIGRsRtEXFH+do7s9k19Ta2sHuhiNgDeB74UWbu0ux61HdExHBg
+eGbeGRFvBv4EHJaZf2tyaeoDImJQZi4v+zn9FvhMZv6h2XX1Frawe6HMvAVY2uw61Pdk5qLMvLO8
+/TxwH/5GgnpIZi4vbw6k6GNli7KGgS2pQxGxDbArcFtzK1FfERH9IuIOYBHw68z8Y7Nr6k0MbEmr
+KHeH/wz4bNnSlhouM1dm5rsofpvjvRGxU7Nr6k0MbEltRMQAirD+cWZe2ex61Pdk5nPADcCBza6l
+NzGwe6/AHztSc/wAuDczv9PsQtR3RMRmEbFxeXsDYD/Azo41DOxeKCKmA78DdoyIeRFxQrNrUt8Q
+EeOAo4F9ytNr/hwRtnLUE0YAN0TEnRT9Jn6Vmdc0uaZexdO6JEmqAFvYkiRVgIEtSVIFGNiSJFWA
+gS1JUgUY2JIkVYCBLUlSBRjY0htYRKwoz6X+S0T8NCLW72LeMyPicz1Zn6T6GdjSG9sLmfnuzHwH
+8CrwiWYXJGnNGNhS33EzsANARBwbEXeVv2Y2rf2MEfGvEfGHcvoVLS3ziDiibK3fERFzynE7RcRt
+ZUv+zojYvifvlNRX+Etn0htYRCzLzME1F/T4JUVw/xx4X2YujYhNMvOZiDgTWJaZ50fEkMxcWq7j
+bGBRZv5nRNwNHJCZCyNio8x8LiK+C/w+M2eU2+mfmS835x5Lb1y2sKU3tg0i4s/AH4DHgO8D+wCX
+twRyZj7TwXK7RMRNZUBPBnYux98CTIuIfwUGlON+D3w5Ik4BtjGspcYY0P0skipseWa+u3ZERF0X
+gfshcGhm/jUijgP2AsjMT0bEWOAQ4E8R8e6yZX1rOe6aiPh4Zs5Zp/dCki1s6Q2uo3S+HjgiIoYC
+RMSQDuZ5M7AoItajuHoX5bzbZeYfM/NM4AlgVERsm5mPZub/Aa4Edlnn90KSLWzpDW6VTiqZeW9E
+nAPcGBGvAXcAH2k32xkUu9GfoLjU4eBy/HkR8Q/l7d9k5t0RcWpEHEPRC30hcE4D7ofU59npTJKk
+CnCXuCRJFWBgS5JUAQa2JEkVYGBLklQBBrYkSRVgYEuSVAEGtiRJFWBgS5JUAf8fopZnd6YhppAA
+AAAASUVORK5CYII=
 "
 >
 </div>
@@ -1599,21 +1547,9 @@ qcL+H6BaeF38JsnCAAAAAElFTkSuQmCC
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>After exploring the survival statistics visualization, fill in the missing code below so that the function will make your prediction.<br>
-Make sure to keep track of the various features and conditions you tried before arriving at your final prediction model.<br>
-<strong>Hint:</strong> You can start your implementation of this function using the prediction code you wrote earlier from <code>predictions_2</code>.</p>
-
-</div>
-</div>
-</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[63]:</div>
+<div class="prompt input_prompt">In&nbsp;[271]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="k">def</span> <span class="nf">predictions_3</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
@@ -1622,18 +1558,27 @@ Make sure to keep track of the various features and conditions you tried before 
     <span class="n">predictions</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">passenger</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
         
+        <span class="c1">#Needing to filter the &#39;female&#39; sex more I began cutting into the class going one variable at a time</span>
+        <span class="c1">#After experimenting with incrementing ages I would add that to the visual model and move the next</span>
+        <span class="c1">#I did this until I had a solid amount of female population I could classify as deceased from the crash</span>
+        <span class="c1">#I found that after age 40 either parch or pclass would be effective but not both</span>
         <span class="k">if</span><span class="p">(</span><span class="n">passenger</span><span class="p">[</span><span class="s1">&#39;Sex&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;female&#39;</span> <span class="ow">and</span> <span class="n">passenger</span><span class="p">[</span><span class="s1">&#39;Age&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">40</span> <span class="ow">and</span> <span class="p">(</span><span class="n">passenger</span><span class="p">[</span><span class="s1">&#39;Parch&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">passenger</span><span class="p">[</span><span class="s1">&#39;Pclass&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)):</span>
             <span class="n">predictions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>        
-            
+        
         <span class="k">elif</span><span class="p">(</span><span class="n">passenger</span><span class="p">[</span><span class="s1">&#39;Age&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="ow">and</span> <span class="n">passenger</span><span class="p">[</span><span class="s1">&#39;Sex&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;male&#39;</span><span class="p">):</span>
             <span class="n">predictions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         
+        <span class="c1">#I experimented with every variable at incrementing values most on a grand scale did not positively affect the accuracy</span>
+        <span class="c1">#going through the general classifiers I found that at a certain fare chances of survival went up so I accounted for that here</span>
         <span class="k">elif</span><span class="p">(</span><span class="n">passenger</span><span class="p">[</span><span class="s1">&#39;Fare&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">275</span><span class="p">):</span>
             <span class="n">predictions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         
+        <span class="c1">#having adjusted the initial filter on women I had to re-compensate that making sure remaining males that didn&#39;t fit in the</span>
+        <span class="c1">#upper if statements were considered deceased</span>
         <span class="k">elif</span><span class="p">(</span><span class="n">passenger</span><span class="p">[</span><span class="s1">&#39;Sex&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;male&#39;</span><span class="p">):</span>
             <span class="n">predictions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         
+        <span class="c1">#this is to grab every remaining female that isn&#39;t included from the first statement as a survivor</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">predictions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     
@@ -1662,7 +1607,7 @@ Make sure to keep track of the various features and conditions you tried before 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[64]:</div>
+<div class="prompt input_prompt">In&nbsp;[272]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">outcomes</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
@@ -1692,16 +1637,6 @@ Make sure to keep track of the various features and conditions you tried before 
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Predictions have an accuracy of 80.36%</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Conclusion">Conclusion<a class="anchor-link" href="#Conclusion">&#182;</a></h1><p>After several iterations of exploring and conditioning on the data, you have built a useful algorithm for predicting the survival of each passenger aboard the RMS Titanic. The technique applied in this project is a manual implementation of a simple machine learning model, the <em>decision tree</em>. A decision tree splits a set of data into smaller and smaller groups (called <em>nodes</em>), by one feature at a time. Each time a subset of the data is split, our predictions become more accurate if each of the resulting subgroups are more homogeneous (contain similar labels) than before. The advantage of having a computer do things for us is that it will be more exhaustive and more precise than our manual exploration above. <a href="http://www.r2d3.us/visual-intro-to-machine-learning-part-1/">This link</a> provides another introduction into machine learning using a decision tree.</p>
 <p>A decision tree is just one of many models that come from <em>supervised learning</em>. In supervised learning, we attempt to use features of the data to predict or model things with objective outcome labels. That is to say, each of our data points has a known outcome value, such as a categorical, discrete label like <code>'Survived'</code>, or a numerical, continuous value like predicting the price of a house.</p>
 <h3 id="Question-5">Question 5<a class="anchor-link" href="#Question-5">&#182;</a></h3><p><em>Think of a real-world scenario where supervised learning could be applied. What would be the outcome variable that you are trying to predict? Name two features about the data used in this scenario that might be helpful for making the predictions.</em></p>
@@ -1714,19 +1649,7 @@ Make sure to keep track of the various features and conditions you tried before 
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This could be applied to sports. In one case we'd like to look at homerun percentage. We could use features like weight, or features like bat accuracy to help predict this.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<blockquote><p><strong>Note</strong>: Once you have completed all of the code implementations and successfully answered each question above, you may finalize your work by exporting the iPython Notebook as an HTML document. You can do this by using the menu above and navigating to<br>
-<strong>File -&gt; Download as -&gt; HTML (.html)</strong>. Include the finished document along with this notebook as your submission.</p>
-</blockquote>
+<p>This could be applied to sports. In one case we'd like to look at homerun percentage. We could use features like weight, or features like bat accuracy to help predict these</p>
 
 </div>
 </div>
