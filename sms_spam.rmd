@@ -1,0 +1,167 @@
+---
+title: "SMS Spam Collection"
+author: "Yuchin Pan"
+date: "January 14, 2017"
+output: html_document
+---
+
+## Collecting and Exploring the Data
+
+```{r}
+sms_raw <- read.csv("Machine-Learning-with-R-Datasets-master/sms_spam.csv", stringsAsFactors = FALSE)
+str(sms_raw)
+```
+
+Type is currently a character vector and because it's catagorical we'd like to make it a factor
+
+```{r}
+sms_raw$type <- factor(sms_raw$type)
+str(sms_raw$type)
+table(sms_raw$type)
+```
+
+## Data Preparation - Processing Text Data for Analysis
+
+We need to consider numbers, punctuation , uninteresting words like "and, or, but" and how to break sentences apart. To do this we can use the package *tm*.
+
+The first step in processing text data involes creating a corpus. This is a collection of text documents.
+**Corpus()** Creates an R object to store text documents. Since our SMS is already in a vector we use **VectorSource**
+
+```{r}
+library(tm)
+sms_corpus <- Corpus(VectorSource(sms_raw$text))
+print(sms_corpus)
+inspect(sms_corpus[1:3])
+```
+
+Next we'll clean up our corpus by transforming/mapping. We will remove numbers, make the capitalization uniform, remove filler words also known as stop words. Thankfully this is provided with the **stopwords()** function. Wanting to look at only key word, we'll remove punctuation and additional whitespace between words to just simply 1 space. 
+
+```{r}
+corpus_clean <-tm_map(sms_corpus, tolower)
+corpus_clean <-tm_map(corpus_clean, PlainTextDocument) #tolower and trim do not work well in tm 0.6 so we must make sure that they are transformed into a PlainTextDocument in this situation to make sure a DocumentTermMatrix works later
+corpus_clean <-tm_map(corpus_clean, removeNumbers)
+corpus_clean <-tm_map(corpus_clean, removeWords, stopwords())
+corpus_clean <-tm_map(corpus_clean, removePunctuation)
+corpus_clean <-tm_map(corpus_clean, stripWhitespace)
+inspect(corpus_clean[1:3])
+```
+
+After cleaning we'll split the messages through tokenization. They are defined as a single element of a text string. In this case tokens are words.
+
+We'll create a sparse matrix as a reference to the count of words.
+
+```{r}
+sms_dtm <- DocumentTermMatrix(corpus_clean)
+```
+
+## Data Preparation - Creating Training and Test Data
+
+We'll need to split our data into a training and test dataset so that our model can evaluate data that it hasn't previously seen. In this case we'll take 25% out for testing. Our data is already random so we don't have to worry about that.
+
+```{r}
+sms_raw_train <- sms_raw[1:4169,]
+sms_raw_test <- sms_raw[4170:5559,]
+sms_dtm_train <- sms_dtm[1:4169,]
+sms_dtm_test <- sms_dtm[4170:5559,]
+sms_corpus_train <- corpus_clean[1:4169]
+sms_corpus_test <- corpus_clean[4170:5559]
+prop.table(table(sms_raw_train$type))
+prop.table(table(sms_raw_test$type))
+```
+
+Both of our sets have 13% spam to work with.
+
+### Visualizing text data with Word Clouds
+
+A word cloud is a visual depiction of word frequency in text data. The larger the font of the word the more frequent the word. This has been growing in popularity for it's usage in Social Media. 
+
+This is all provided in the *wordcloud* package.
+
+```{r}
+library(wordcloud)
+wordcloud(sms_corpus_train, min.freq = 40, random.order = FALSE)
+```
+
+You generally want the minimum frequency to be 10% of the corpus documents. 
+
+Next we'll create subsets of the raw train by SMS type.
+
+```{r}
+spam <- subset(sms_raw_train, type == "spam")
+ham <- subset(sms_raw_train, type == "ham")
+wordcloud(spam$text, max.words = 40, scale = c(3, 0.5))
+wordcloud(ham$text, max.words = 40, scale = c(3, 0.5))
+```
+
+These give us a good idea of what is a spam word and what is a ham word. The cloud on the left has words like txt, free, guaranteed, or urgent which are all words synonymous with spam text messages.
+
+## Data Preparation - Creating Indicator Features for Frequent Words
+
+Our final step for data preparation is transforming our sparse matrix into a data structure that we can use to train a naive Bayes classifier. We'll do this by finding the 5 most frequent terms with **findFreqTerms()** to receive a character vector containing the words appearing at least the specified # of times. 
+
+```{r}
+
+Dictionary <- function(x) {
+    if( is.character(x) ) {
+        return (x)
+    }
+    stop('x is not a character vector')
+}
+
+findFreqTerms(sms_dtm_train, 5)
+sms_dict <- Dictionary(findFreqTerms(sms_dtm_train, 5))
+sms_train <- DocumentTermMatrix(sms_corpus_train, list(dictionary = sms_dict))
+sms_test <- DocumentTermMatrix(sms_corpus_test, list(dictionary = sms_dict))
+```
+
+
+```{r}
+convert_counts <- function(x) {
+  x <- ifelse(x > 0, 1, 0) 
+  x <- factor(x, levels = c(0,1), labels = c("No", "Yes")) #this transforms the 1s and 0s to Yes and No
+  return (x)
+}
+
+sms_train <- apply(sms_train, MARGIN = 2, convert_counts)
+sms_test <- apply(sms_test, MARGIN = 2, convert_counts)
+```
+
+
+## Training a Model on the Data
+
+Now that we're finished adjusting the data's format we're ready to put it through a naive Bayes algorithm. We will use the *e1071* package for this. Another alternative is the **NaiveBayes()** in the *klaR* package. Both are identical.
+
+m <- naiveBayes(train, class, laplace = 0)
+
+```{r}
+library(e1071)
+sms_classifier <- naiveBayes(sms_train, sms_raw_train$type)
+```
+
+## Evaluating Model Performance
+
+Now that we've trained our model we need to apply it to our test data that we removed earlier in sms_test. We also stored the answers to the data in sms_raw_test in the type vector. To do this we'll use the **predict()** function and the **CrossTable()** function to analyze it's performance.
+
+```{r}
+library(gmodels)
+sms_test_pred <- predict(sms_classifier, sms_test)
+CrossTable(sms_test_pred, sms_raw_test$type,
+           prop.chisq = FALSE, prop.t = FALSE,
+           dnn = c('predicted', 'actual'))
+```
+
+Looking at the table I have 6/1209 ham messages misclassified as spam. 28/181 spam messages misclassified as ham. For a quick program the performance is pretty strong. However let's look at some ways we might be able to improve this model.
+
+## Improving Model Performance
+
+We didn't set a value for our Laplace estimator when we trained our model. This allowed words that appeared in no spam or ham messages to have a indisputable say in classification. We'll build the same naive Bayes model as before except we'll set our laplace  = 1.
+
+```{r}
+sms_classifier2 <- naiveBayes(sms_train,sms_raw_train$type, laplace = 1)
+sms_test_pred2 <- predict(sms_classifier2, sms_test)
+CrossTable(sms_test_pred2, sms_raw_test$type,
+           prop.chisq = FALSE, prop.t = FALSE,
+           dnn = c('predicted', 'actual'))
+```
+
+We managed to reduce the misclassification of the ham messages by 1, we also ended up increasing out misclassified spam by 2. Very minor improvement, but in my opinion the hassle of deleting 2 more emails and making sure one really important one is not marked as spam is worth it for me. Balance is important as if aggression towards spam is too much, some important messages might be missed.
