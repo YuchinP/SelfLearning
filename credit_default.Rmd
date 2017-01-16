@@ -1,0 +1,160 @@
+---
+title: "Financial Crisis"
+author: "Yuchin Pan"
+date: "January 15, 2017"
+output: html_document
+---
+
+## Collecting and Exploring the Data
+
+```{r}
+credit <- read.csv('Machine-Learning-with-R-datasets-master/credit.csv')
+str(credit)
+```
+
+Explore a few of the features that would predict a default
+
+```{r}
+#table for catagorical variables
+table(credit$checking_balance)
+table(credit$savings_balance)
+
+#summary for numerical variables
+summary(credit$months_loan_duration)
+summary(credit$amount)
+```
+
+DM starts for Deutsche Marks as this loan data was acquired from Germany. 
+
+Loans ranged from 250-18420 over the span of 4 months to 72 months, with a median of 2320 over 18 months.
+Next we'll look at whether the applicant's defaulted. This essentially means the applicant was unable to meet the payment agreements.
+
+```{r}
+defaulted <- table(credit$default)
+names(defaulted) <- c("no","yes")
+defaulted
+```
+
+This shows that 30% of the bank's loans went into default which is bad for the everyone as the bank do not recover their full investment as the applicant becomes burdened by unpaid debt. The goal of this model is to identify applicants that are likely to default so that the number can be reduced.
+
+## Data Preparation - Creating Random Training and Test Datasets
+
+This data is not randomized. It's likely the bank had some sort of way to organize their loans. This would be a huge problem is our 10% test sample is all one side of the spectrum aside from a representation of the entire population. we will utilize **order** to rearrange a list, we combine it with **runif** which will generate a sequence of random numbers between 0 and 1. With the new randomly ordered credit data frame we will use **set.seed** ensuring that the analysis is reoeated and an identical result is obtained.
+
+```{r}
+set.seed(12345)
+credit_rand <- credit[order(runif(1000)),] #Creating a random list of 1000 numbers, there are 1000 examples in the data
+summary(credit$amount)
+summary(credit_rand$amount)
+```
+
+This ensures that the distribution is the same. However if we look at the head we can see that the numbers are different
+
+```{r}
+head(credit$amount)
+head(credit_rand$amount)
+```
+
+Now to split the data into testing and training sets
+
+```{r}
+credit_train <- credit_rand[1:900,]
+credit_test <- credit_rand[901:1000,]
+
+#Test and see if the same loan proportion in each one
+prop.table(table(credit_train$default))
+prop.table(table(credit_test$default))
+```
+
+Looks like a fairly even split. We can now create a decision tree off of this.
+
+## Training a Model on the Data
+
+For this we'll need the *C50* package to create this decision tree model.
+
+Classifier
+m <- c5.0(train, class, trials = 1, costs = NULL)
+
+Predictions
+p <- predict(m, test,train, type = "class")
+
+```{r}
+library(C50)
+credit_train$default <- factor(credit_train$default)
+credit_model <- C5.0(credit_train[-17], credit_train$default)
+credit_model
+```
+```{r}
+summary(credit_model)
+```
+
+At the bottom of the summary we have a confusion matrix that shows the decision tree's accuracy. This one shows a 14.1% error, misclassifying 127 of the 900 instances. Decision trees are known for overfitting the model based on the training data. For this reason the error may be overly optimistic, it's important to test it with the test sample.
+
+## Evaluating Model Performance
+
+```{r}
+credit_pred <- predict(credit_model, credit_test)
+library(gmodels)
+CrossTable(credit_test$default, credit_pred,
+           prop.chisq = FALSE, prop.c = FALSE, prop.r = FALSE,
+           dnn = c('actual default', 'predicted default'))
+```
+
+This confusion matrix with the test data shows 11 misclassified false negatives and 14 false positives. Resulting in an overall accuracy of 75%. This means that 11 were predicted to default, but did not. Also 14 people were not predicted to default, but did default. With the test data the model performs about 10% worse than the training data error.
+
+## Improving Model Performance
+
+###Boosting Accuracy of Decision Trees
+One of the improvements of the c5.0 algorithm over the c4.5 is the addition of adaptive boosting. This is defined as the process in which many decision trees are built, and the trees vote on the best class for each example. It's core belief is that combining a number of weak perfomring learners, a team that is much stronger can be formed. While each model has strengths and weaknesses, using a combination of several learners will dramatically improve the accuracy of a classifier. 
+
+This can be added to the C5.0 model by just adding the trials parameter. This indicates the number of separate decision trees to use in the boosted team. This sets an upper limit, once the algorithm recognizes that additional trees aren't improving the accuracy it will stop. 10 trials is the defacto standard, suggested that it can reduce error rates of test data by about 25%.
+
+```{r}
+credit_boost10 <- C5.0(credit_train[-17], credit_train$default, trials = 10)
+credit_boost10
+```
+
+Our Average tree size shrunk from 57 to 47.3
+
+```{r}
+summary(credit_boost10)
+```
+
+This summary reveals all 10 decision trees. Importantly, the model has improved to only make 30 total errors out of the 900 training instances. This is an error rate of 3.3% and a significant improvement over the 14.1% earlier error. Now let's look at the test data.
+
+```{r}
+credit_boost_pred10 <- predict(credit_boost10, credit_test)
+CrossTable(credit_test$default, credit_boost_pred10,
+           prop.chisq = FALSE, prop.c = FALSE, prop.r = FALSE,
+           dnn = c('actual default', 'predicted default'))
+```
+
+We managed to reduce the error on our test data from 25% to 21%. We have the same number of predicted that defaulted that we predicted they would not default but they did. While it's a reasonable improvement it's not doing so hot at predicting defaults, getting 16/32 inncorect which is 50%! 
+
+> Why not add boosting to every decision tree? First, if buiding a decision tree takes a great amount of computation time, it might be impractical to add many more trees. Secondly, if the training data is very noisy, boosting will not give it any improvement.
+
+### Making some mistakes are more costly than others
+
+Giving loans to applicants who are likely to default are incredibly costly. In this case it's way better to reject borderline candidates versus accept the borderline. We can implement an error cost to the C5.0 algorithm. These penalities are designated within a cost matrix which specifies how many more costly each error is relative to the others. If for example we believed that a loan default costs 4x more than a missed opportunity.
+
+```{r}
+error_cost <- matrix(c(0,1,4,0), nrow = 2)
+error_cost
+```
+
+Value 1 equates to no and value 2 equates to yes.
+
+Let's apply it to the classification problem decision tree and see how this effects it. 
+
+```{r}
+credit_cost <- C5.0(credit_train[-17], credit_train$default,
+                    costs = error_cost)
+credit_cost_pred <- predict(credit_cost, credit_test)
+CrossTable(credit_test$default, credit_cost_pred,
+           prop.chisq = FALSE, prop.c = FALSE, prop.r = FALSE,
+           dnn = c('actual default', 'predicted default'))
+```
+
+Overall this model makes more mistakes at a 35% error rate, but the allocation is different. Our predictions on people who would not default but actually did is dramatically lowered by 11. While we will reject more people who won't default we run a much small risk of not receiving an investment back.
+
+
