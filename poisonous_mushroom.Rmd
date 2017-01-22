@@ -1,0 +1,84 @@
+---
+title: "One Rule RIPPER"
+author: "Yuchin Pan"
+date: "January 21, 2017"
+output: html_document
+---
+
+# Identifying Poisonous Mushrooms with Rule Learners
+Unlike plants there are no clear rules to identifying if a mushroom is poisonous or edible. One of the benefits of Rule Learners is that they generate easy-to-understand rules that will be a appropriate fit for a classification task like this one. However, rules will only be as useful as they are accurate!
+
+##Collecting and Exploring the Data
+Utilizing the Mushroom Dataset from Jeff Schlimmer of Carngie Mellon. It is available at the UCI Machine Learning Repository at https://archive.ics.uci/ml/datasets/Mushroom
+
+Sample contains 8,124 mushroom samples from 23 species of gilled mushrooms. Each mushroom is identified as "definitely edible", "definitely poisonous", "likely poisonous and not recommended to be eaten". In this example it was combined with "definitely posionous" to make two groups of poisonous and non-poisonous. There are 22 features of the samples including cap shape, cap color, odorm gill size and color, stalk shape and habitat. 
+
+```{r}
+mushrooms <- read.csv("Machine-Learning-with-R-datasets-master/mushrooms.csv", stringsAsFactors = TRUE)
+str(mushrooms)
+# $ veil_type is a factor with 1 level which means it will not vary across samples, and provides no useufl information for prediction. For this reason we should drop it
+mushrooms$veil_type <- NULL
+levels(mushrooms$type) <- c("edible", "poisonous")
+table(mushrooms$type)
+```
+
+>In this instance e = "edible", p = "poisonous"
+So we can see in this sample there are 4208 edible mushrooms and 3916 poisonous mushrooms.
+For the purpose of this experiment we will hold an assumption that this set is an exhaustive set of all possible wild mushrooms. This is important because it means that we will not need to hold some samples out of the training data for testing purposes. We are not trying to develop rules for unseen mushrooms, but rather develop rules for the known mushroom types. For this reason we can develop rules and build a model on the same set of data
+
+##Training a model on the data
+
+If we were working on a ZeroR classifier on this data it would ignore all features and just predict the target's mode. It would simply say "all mushrooms are edible" because 52% of the sample is edible. This is incredibly unhelpful so we'll have to develop a rule that is much better than this benchmark. 
+
+To use the 1R algorithm we will use the *RWeka* package using it's feature **OneR()**. In order to download RWeka, your computer must have Java installed on your system.
+
+m <- OneR(class ~ predictors, data = mydata)
+
+The tilde(~) operator expresses the relationship between a target variable and its predictors. Class variable that is to be learned goes on the left, and the features on the right. 
+
+```{r}
+library(RWeka)
+
+mushroom_1R <- OneR(type ~ ., data = mushrooms)
+mushroom_1R
+
+```
+
+We can see that odor is the feature chosen for rule generation. In this case it gives a good rule of thumb in that if a mushroom is nice smelling "almond, anise" or has no smell at all it is safe to say that it is edible. 
+
+## Evaluating Model Performance
+
+In our output it shows that it correctly specifies 8004/8124 mushroom samples, that is approximately 99%. We can obtain additional details about the classifier with summary.
+
+```{r}
+summary(mushroom_1R)
+```
+
+In our confusion matrix we can see that we identified 120 mushrooms as poisonous despite actually being edible, however we did not identify any mushrooms as edible that were actually poisonous. It seems our rule plays it safe and is a very good general rule of thumb for foragers. Let's see if we can try and improve it a little bit.
+
+
+## Improving Model Performance
+
+For a more sophisticated rule learner we will implement **JRip()** which is a java based implementation of the RIPPER algorithm. This is also included with *RWeka()* 
+
+m <- JRip(class  ~ predictors, data = mydata)
+
+As seen there the model is very similar to the OneR model. Let's train the rule learner the exact same way and see what happens
+
+```{r}
+mushroom_JRip <- JRip(type ~ ., data = mushrooms)
+mushroom_JRip
+```
+
+In this it created 9 rules for us to follow based on the mushroom data. 
+  1. If the odor smells foul then it is poisonous
+  2. If the gill size is narrow and the color is buff it is poisonous
+  3. If the gill size is narrow and the odor is pungent it is poisonous
+  4. If it smells of creosote it is poisonous
+  5. If the spore print color is green it is poisonous
+  6. If the stalk surface below the ring is scaly and the surface above the ring is silky it is poisonous
+  7. If the habitat is in leaves and the cap color is white it is poisonous
+  8. If the stalk color above the ring is yellow it is poisonous
+  9. Everything else is edible
+  
+
