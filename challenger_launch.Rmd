@@ -1,0 +1,84 @@
+---
+title: "Challenger Launch"
+author: "Yuchin Pan"
+date: "January 22, 2017"
+output: html_document
+---
+
+Looking at the past 23 shuttle launches into space, rocket scientist were concerned about the temperature at the launch might cause an O-ring failure. We will use a simple linear regression to see if there is a correlation between the two variables.
+
+
+To get a better look at linear regression we need to look at Ordinary Least Squares (OLS) which is used to measure unknown parameters within linear regression. This is done by taking the squared sums of the residuals. In order to do this we'll need to calculate the a and the b value. 
+
+$$a = {\bar {y}} - b{\bar {x}}$$
+$$ b = (\frac {Cov(x,y)}{Var(x)})$$
+
+
+
+```{r}
+launch <- read.csv("machine-learning-with-r-datasets-master/challenger.csv")
+
+b <- cov(launch$temperature, launch$distress_ct) / var(launch$temperature)
+b
+
+a <- mean(launch$distress_ct) - b * mean(launch$temperature)
+a
+
+```
+
+Correlation between two variables is a number that indicates how closely a relationship follows a straight line. It generally referes to Pearson's correlation coefficient. This is defined by
+
+$$ P_{x,y} = Corr(x,y) = (\frac {Cov(x,y)}{\sigma_x \sigma_y})$$
+
+```{r}
+r <- cov(launch$temperature, launch$distress_ct) / 
+  (sd(launch$temperature) * sd(launch$distress_ct))
+
+r
+
+cor(launch$temperature, launch$distress_ct)
+```
+ 
+ With a correltation of -0.725 there is a fairly strong negative linear association between temperayure and distressed O-rings. This should be a good indicator that a low-temperature launch is problematic and something that should be avoided
+
+
+# Multiple Linear Regression
+
+Using built-in R matrix operations we can try to implement a simple multiple regression learner. 
+
+```{r}
+reg <- function(y,x) {
+  x <- as.matrix(x) #This coerces data into a matrix form
+  x <- cbind(Intercept = 1, x) #This binds an additional column onto the x matrix Intercept = 1 names the new value Intercept and to fill it with repeating 1 values
+  solve(t(x) %*% x) %*% t(x) %*% y #solve() takes the matrix inverse
+  #t() is used to transpose a matrix
+  #%*% multiples two matrices
+}
+```
+
+We have created the function reg which takes a parameter y and a parameter x and returns a matrix of estimated beta coefficients.
+
+Let's use it with the launch data
+
+```{r}
+str(launch)
+```
+
+As seen from our a and b from the earlier function we can use it to measure how accurate our function is working. 
+
+a should equal 4.3 and b should be -0.57. Seeing as temperature is the third column we can look at it specifically.
+
+```{r}
+reg(y = launch$distress_ct, x = launch[3])
+
+```
+
+Seeing that this matches our prior results let's build a multiple regression model. We'll apply 3 columns instead of 1 this time.
+
+```{r}
+reg(y = launch$distress_ct, x = launch[3:5])
+```
+
+This model predicts the number of O-ring failures versus the columns temperature, pressure and the launch ID number. Negative coefficients suggest that as temperature or launchID increases, the number of O-ring failures go down. Conversely as pressure goes up the predicted number of O-ring failures will also go up. 
+
+
