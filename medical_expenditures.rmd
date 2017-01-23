@@ -1,0 +1,158 @@
+---
+title: "Medical Expenses using Linear Regression"
+author: "Yuchin Pan"
+date: "January 22, 2017"
+output: html_document
+---
+
+An insurance company makes profit by collecting more in yearly premiums than how much they spend on medical care to its beneficiaries. As a result, they invest a lot of money and time into developing accurate forecast models on medical expenses.
+
+Expenses being difficult to estimate comes from the most costly conditions are seemingly rare and random to predict. The goal of this analysis is to use past patient data to estimate the average medical care expenses for such population segments. 
+
+#Collecting and Exploring the Data
+
+```{r}
+insurance <- read.csv("machine-learning-with-r-datasets-master/insurance.csv", stringsAsFactors = TRUE)
+str(insurance)
+```
+
+Here we can see 1338 examples of beneficiares currently enrolled in a insurance plan. We have different features to work with.
+
+Age is an integer indicating the age however it excludes those above 64 as they are generally covered by the government
+
+BMI is a sense of how over or under weight a person is relative to their height. This is measured in kilograms divided by meters squared. An ideal BMI is within the range of 18.5 to 24.9
+
+Region is the beenficiary's place of residence in the US. It is divided by northeast, southeast, southwest, or northwest
+
+We're gonna use charges as the dependant variable as it's what we're searching for a predictor on.
+
+```{r}
+summary(insurance$charges)
+```
+
+```{r}
+hist(insurance$charges)
+```
+
+As we can see our mean is significantly higher than our median. This is shown in both the five number summary and the histogram. This implies that insurance charges are right skewed and there is a much higher frequency in lower charges, but the cost of the higher ones are very high. 
+
+Because linear regression assumes a normal distribution of the dependant variable, this distribution is not ideal. However in practice this is the norm. We can adjust this and normalize it later if needed. 
+Another issue is that regression models require all predictors to be numerical. We have three predictors that are categorical in "sex", "smoker" and "region". Let's look at how the region is distributed.
+
+```{r}
+table(insurance$region)
+```
+
+The regions are rather evenly distributed for the most part.
+
+### Exploring relationships among features - Correlation Matrix
+
+Before we can fit our data to a regression model, it's very useful to determine how the independant variables are related to the dependant variable as well as each other. A good way of looking at this is by using a correlation matrix. 
+
+```{r}
+cor(insurance[c("age", "bmi", "children", "charges")])
+```
+
+The diagonal will always be 1 because a variable against itself will be perfectly in sync. 
+
+As for the rest of the values there don't appear to be any strong correlations. THere are a few notable ones on charges like a weak one with age and bmi.
+
+### Visualizing relationships among features - the scatterplot matrix
+
+One of the best way to look at relationships is through visualization. A good way to go about this is through the scatterplot matrix (SPLOM). While this doesn't give multi-dimensional visualization because only two features are examined at a time, it's still very useful to look at potentional patterns among variables. Here we can use the pairs function
+
+
+```{r}
+pairs(insurance[c("age", "bmi", "children", "charges")])
+```
+
+We can add more information by using the **panels** feature from the *psych* package.
+
+```{r}
+library(psych)
+pairs.panels(insurance[c("age", "bmi", "children", "charges")])
+```
+
+On the right side it is now a correlation matrix to make up for the repeated space. The oval shape in the graphs is referred to as a correlation ellipse. Provdes a visualization of how strongly the variables are correlated based on the shape. The dot in the center indicates the mean value for the x and y axis variables. The more the oval is stretched, the stronger the correlation. In the opposite case, the more the round it is, the weaker the correlation like with bmi and children.
+
+The curve drawn on the graphs is referred to the loess smooth. This indicates the general relationship between the x and y axis variables.
+
+#Training a model on the data
+
+To fit a linear model we will use the **stats** package and it's *lm()* function.
+
+> m <- lm(dv ~ iv, data = mydata)
+
+```{r}
+ins_model <- lm(charges ~ ., data = insurance)
+ins_model
+```
+
+These intercepts tell us the value of chargers when the independant variables are equal to zero.
+We can see from this as someone increases in age by a year, we can expect \$256.90 higher medical expenses on average, assuming everything else is equal. Similarly we can see every additional child results in about $475.50 in additional medical experiences. Additional coefficient are there because for factor variables that are coded as dummy variables. This fixes the categorical issue by making the variables a true or false condition across many different dummy variables.
+
+#Evaluating Model Performance
+
+```{r}
+summary(ins_model)
+```
+
+Residuals section provide summary statistics for the errors in our predictions. Since a residual is equal to the true value minus the predicted variable, the maximum error of 29992.8 predicts that the model under-predicted expenses by nearly \$30,000 for at least one observation. 
+
+The stars i.e *** indicate the predictive power of each feature in the model. If you look at the significant values in the footer it measures how likely the true coefficient is 0 given the value of the estimate. The three stars indicates there is a significance level of 0, meaning this predictor is extremely unlikely to be unrelated to the dependant variable. 
+
+The multiple r-squared value (coefficient of determination) provides a measre on how well our model explains the values of the dependant variable. We want this closer to 1 as that will mean it explains everything in the data. Based on the R squared value of 0.75 we know our model explains 75% of the data. Adjusted R-Squared corrects the R-squared by penalizing models with large numbers of independant variables. Very useful for comparing model performance with different number of explanatory variables.
+
+#Improving Model Performance
+
+###Model specification - adding non-linear relationships
+In linear regression, the relationship between an independent variable and dependent variable are assumed to be linear. However this may not necessarily be true. The effect of age on medical expenditures may not be constant as treatment for older people are more expensive than the younger aged people. 
+
+To account for this non-linear relationship, we can add a higher order term, transferring the model into a polynomial. We create a seperate beta to be estimated. 
+
+```{r}
+insurance$age2 <- insurance$age^2
+```
+
+Now that we've done this we can add both of these variables to model.
+
+### Transformation - converting a numeric variable to a binary indicator
+
+Sometimes as we understand our data the effect of a feature is not cumulative, but more so only has an effect until a certain threshold. For example this can apply to BMI as there could be zero impact on expenditures for those within the earlier specified "normal" range and then an immediate effect on those who pass BMI of 30 (obese). 
+
+We can model this by creating a binary indicator variable similar to the dummy variable that will switch to 1 if the beneficiary is considered to be obese.
+
+We can create this feature with the use of the **ifelse()** function.
+
+```{r}
+insurance$bmi30 <- ifelse(insurance$bmi >= 30, 1, 0)
+```
+
+We can now add both variables to our model.
+ 
+###Model Specification - adding interaction effects
+ 
+So far we've only considered each predictor's individual contribution to an outcome. Some features maybe have a combined impact on the dependant variable through interaction. For instance, smoking and obesity both have a negative effect seperately, but combined it could be a much more devastating effect. This combination is called an interaction and it can be tested within R.
+
+We can use the star operator within "charges ~ bmi30*smoker". This causes the operator to model
+charges ~ bmi30 + smokeryes + bmi30:smokeryes
+
+The colon operator indicates that the two variables are an interaction.
+
+> Interactions should never be included within a model without also adding each of the interacting variables. If you always create interactions using the star operator, this will not be a problem as R will add them automatically.
+
+### Putting all these together
+
+Now that we've
+  1. Added a non-linear term for age
+  2. Created an indicator for obesity
+  3. Specified an interaction between obesity and smoking
+
+We can train our model again except adding in the new variables
+
+```{r}
+ins_model2 <- lm(charges ~ age + age2 + children + bmi + sex + bmi30*smoker + region, data = insurance)
+summary(ins_model2)
+```
+
+Using our improvements we've managed to improve our R squared value from 0.75 to 0.87, explaining 12% more of the data. On top of all this all our of predicted new variables have had an impact. Namely the interaction variable of smoking and obesity which has a huge cost of $19,810 per year. This creates a suggestion that smoking exacerbates diseases associated with obesity. Despite adding 3 more variables our adjusted R-Squared value hasn't changed a whole lot which is a good sign. 
