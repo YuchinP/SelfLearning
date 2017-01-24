@@ -1,0 +1,151 @@
+---
+title: "Estimating Quality of Wines with Regression/Model Trees"
+author: "Yuchin Pan"
+date: "January 23, 2017"
+output: html_document
+---
+
+Looking to employ Machine Learning to assist with rating the quality of wine. 
+Using Regression and Model trees we will create a system that mimicks expert wine raters. Decision Trees result in a model this allows winemakers to understand the qualities that compose of a top wine. As this also removes the human element, it results in a more objective and consistent system.
+
+# Collecting and Exploring the Data
+
+Working with the UCI Machine Learning Data Repository's data on white wine. This includes examples from Portugal- one of the leading wine-producing countries. While factors may differ between red and white, we will look at popular white-wines.
+
+This data includes information on 11 chemical properties in 4,898 wine samples. These include components like sugar content, chlorides, pH and density. These were evaluated in a blind tasting of panels with no less than 3 judges on a quality scale of 0 (very bad) to 10 (excellent). If judges disagreed about the rating, the median value was used. 
+```{r}
+wine <- read.csv("whitewines.csv")
+str(wine)
+```
+
+Contains 12 variables which are numeric aside from quality which is an integer value. 
+The benefit of using trees is that we do not need to normalize or standardize the features.
+
+Let's look at the distribution
+```{r}
+hist(wine$quality)
+```
+
+```{r}
+summary(wine)
+```
+
+
+This data looks fairly normal, which makes intuitive sense. Most wines are likely to be average with a few top notch or very poor wines. This is seen in the summary as the mean and median of quality are very close to one another. 
+
+
+Since the wine data is already sorted randomly we can proceed and divide it up into training and test data.
+
+```{r}
+wine_train <- wine[1:3750,]
+wine_test <- wine[3751:4898,]
+```
+
+This is a 75:25 split between training and testing.
+
+
+#Training a model on the data
+
+### Regression Tree Model
+For this we will use the *rpart* (recursive partition) package.
+This offers a good implementation of regression trees by using the **rpart()** function.
+
+> m <- rpart(dv ~ iv, data = mydata)
+
+dv = dependant variable
+iv =  independant variables
+
+```{r}
+library(rpart)
+m.rpart <- rpart(quality ~ ., data = wine_train)
+m.rpart
+```
+
+For each node described by a list number it has a predictor with a decision point. Every node depicted with a * are terminal or lead nodes being that they come to a prediction in the end. 
+
+However this is fairly tough to look at and would be much easier visualized. For this we can use rpart.plot package to work with this
+
+```{r}
+library(rpart.plot)
+rpart.plot(m.rpart, digits = 3)
+```
+
+There are additional parameters than digits that can help clean this tree diagram up as well. For instance, fallen.leaves forces the leaf nodes to be aligned at the bottom. type and extra parameters affect the way the decision and nodes are labeled.
+
+```{r}
+rpart.plot(m.rpart, digits = 4, fallen.leaves = TRUE,
+           type = 3, extra = 101)
+```
+
+# Evaluating Model Performance
+
+To evaluate the performance we can use the predict function in conjunction with our test data. This will return a numerical data that we will store in a vector
+
+```{r}
+p.rpart <- predict(m.rpart, wine_test)
+
+summary(p.rpart)
+summary(wine_test$quality)
+```
+
+These two summaries show that our model (the top one) is not properly determining the extremes of the data. While the median and mean are fairly close the maxes and mins are off by approximately 2. 
+
+We can gauge the performance of the predicted and actual quality using the correlation function to measure the relationship between two equal-length vectors.
+
+```{r}
+cor(p.rpart, wine_test$quality)
+```
+
+This shows that our values are 0.49 related to the actual values. 
+
+##Measuring performance with mean absolute error
+
+Anothe rway to think about a model's performance is to see how far on average the prediction was from it's actual value. This is called the mean absolute value (MAE). 
+
+$$MAE = \frac{1}{n}\sum_{i=1}^{n}|e_i|$$
+This essentially takes the absolute value of the errors averaged to find the difference between the predicted and actual values. 
+
+```{r}
+MAE <- function(actual, predicted) {
+  mean(abs(actual - predicted))
+}
+
+MAE(p.rpart, wine_test$quality)
+
+```
+
+With a MAE of 0.57 this implies that the difference between predicions and quality is decent. Remember the actual mean was about 5.878 so this is a fairly good performance. 
+
+#Improving Model Performance
+
+To try and improve the model performance let's try using a model tree. This improves on a regression tree by replace the leaf nodes with multiple linear regression models. This usually results in a more accurate result rather than a single number.
+
+For this we can use the M5 Algorithm within the *RWeka* package. 
+
+> m <- M5P(dv ~ iv, data = mydata)
+
+```{r}
+library(RWeka)
+m.m5p <- M5P(quality ~ ., data = wine_train)
+m.m5p
+```
+The key thing to notice is that the leafs end in a linear model. Giving a more relative percentage based relationship. 
+
+```{r}
+summary(m.m5p)
+```
+
+```{r}
+p.m5p <- predict(m.m5p, wine_test)
+summary(p.m5p)
+summary(wine_test$quality)
+```
+
+While not perfect our model is now predicting a much wider range for the maxs and mins. It has also managed to stay relatively near to the correct mean and median.
+
+```{r}
+cor(p.m5p, wine_test$quality)
+MAE(wine_test$quality, p.m5p)
+```
+
+With our minor change we've also managed to increase correlation and improve on the mean absolute error from our regression model. These make for strong algorithms to work on subjective numerical opinions. We can explain relationships between features and an outcome accurately between regression and model trees. 
