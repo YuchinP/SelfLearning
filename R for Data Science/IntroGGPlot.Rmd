@@ -1,0 +1,101 @@
+---
+title: "R For Data Science Introduction and ggplot2"
+author: "Yuchin Stone Pan"
+output: html_document 
+---
+
+First we'll install tidyverse.
+```
+install.packages("tidyverse")
+```
+
+This installs the packages tidyverse, ggplot2, tibble, tidyr, purrr, dyplyr, stringr, and forcats
+
+We'll need 3 additional packages as well
+
+```
+install.packages(c("nycflights13", "gapminder", "Lahman"))
+```
+
+These packages provide data on airline flights, world development, and baseball.
+
+# First Steps
+
+Do cars with big engines use more fuel than cars with small engines? What does the relationship between engine size and fuel efficiency look like?
+
+Start with the ggplot2 dataframe "mpg"
+
+```
+library(tidyverse)
+mpg
+```
+
+For this one we want to look at **displ** which is the engine size in liters and **hwy** which is the car's fuel efficiency on the highway
+
+```
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy))
+```
+
+This plot shows a negative relationship between the two variables in this case.
+Big engines use more fuel.
+
+
+## Ggplot
+ggplot()  creates a coordinate system you can add layers to.
+  The first argument is the dataset to use in this case we used the mpg dataset
+  This will be empty until we add layers to it.
+    geom_point() adds a layer of points that creates a scatterplot
+    ggplot comes with many different types of layers that can be worked together or seperately
+    
+    Each geom function within ggplot takes a mapping argument. This defines the # of variables in the dataset that are mapped to visual properties
+    mappings are always tied to the aes(), and the x and y arguments of the aes()
+      What is the x and y axis?
+      
+### Graphing template
+```
+ggplot (data = <DATA>) +
+  <GEOM_FUNCTION>(mapping = aes(<MAPPINGS>))
+```
+
+### Exercises
+1. Run ggplot(data = mpg). What do you see?
+2. How many rows are in mtcars? How many columns?
+3. What does the drv variable describe? Read the help for ?mpg
+4. Make a scatterplot of hwy versus cyl.
+5. What happens if you make a scatterplot of class vs drv? Why is this not useful?
+
+```
+ggplot(data = mpg)
+```
+I see an empty graph.
+
+```
+mtcars
+nrow(mtcars)
+ncol(mtcars)
+```
+There are 32 rows and 11 columns in the mtcars dataset.
+
+```
+?mpg
+```
+drv is a categorical variable that is made up of 
+  "f" = front-wheel drive
+  "r" = rear-wheel drive
+  "4" = 4 wheel drive
+  
+```
+ggplot (data = mpg) +
+  geom_point(mapping = aes(x = cyl, y = hwy))
+```
+
+```
+ggplot (data = mpg) +
+  geom_point(mapping = aes(x = class, y = drv))
+```
+This is not useful because this is mapping two categorical values against each other. It tells you nothing except for what class and drv a specific data point is. This doesn't show frequency or any kind of trend whatsoever.
+
+
+
+
