@@ -97,5 +97,59 @@ ggplot (data = mpg) +
 This is not useful because this is mapping two categorical values against each other. It tells you nothing except for what class and drv a specific data point is. This doesn't show frequency or any kind of trend whatsoever.
 
 
+## Aesthetic Mappings
+We can add a third variable to our graphs called an aesthetic. An aesthetic is a visual property of the objects in the plot.
+These can be shapes, sizes or colors of the points.
 
+```
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = class))
+```
+
+Here we can see the outliers are 2 seaters. This probably means they are sports cars as they have large engines and due to their size get much better gas mileage.
+
+### Other aesthetic options
+Size of points
+```
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, size = class))
+```
+Transparency of points
+```
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, alpha = class))
+```
+Shape of points
+```
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, shape = class))
+```
+ggplot will only use shapes for 6 of the options
+
+We can also set these manually
+```
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy),color = "blue")
+```
+
+
+Another useful way to add categorical variables is through facets. Subplots that split out the data.
+
+```
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_wrap(~ class, nrow = 2)
+```
+
+```
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_grid(drv ~ cyl)
+```
+
+```
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_grid(. ~ cyl)
+```
 
