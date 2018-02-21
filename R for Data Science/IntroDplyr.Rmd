@@ -1,0 +1,72 @@
+---
+title: "dplyr"
+author: "Yuchin Stone Pan"
+date: "February 20, 2018"
+output: html_document
+---
+
+
+This is an introduction to using dplyr. Very infrequently do we receive data in the correct format we need to create visualizations from. 
+Often we will need to rename variables, create new ones, re-order observations, or any kind of transformation that will make it more digestible to work with.
+
+We will do this learning the dyplr package and a new dataset on flights departing NYC in 2013.
+
+```
+library(nycflights13)
+library(tidyverse)
+```
+
+We'll start by exploring the dataset
+
+
+```
+flights
+```
+
+This will output the first 10 of 33,776 rows and 10 of 19 columns. This is called a Tibble, a dataframe tweaked to work better in the tidyverse.
+
+The various data types for reference
+  int =  integer
+  dbl = doubles or real numbers
+  chr = character vectors or strings
+  dttm = date-times
+  
+  lgl = logical (true or false)
+  fctr = factor, categorical variables with fixed possible values (green, yellow, red)
+  date = dates
+  
+## 5 keys
+
+There are 5 key dplyr functions we will learn that will cover most of the data manipulation
+  Pick observations by their values *Filter()*
+  Reorder the rows *arrange()*
+  Pick variables by their name *select()*
+  Create new variables with functions of existing variables *Mutate()*
+  Collapse many values down to a single summary *Summarize()*
+  
+These can all be used in conjunction with group_by() which changes the scope of each function from operating on the entire dataset to operating on it group-by-group. These 6 functions provide the verbs for data manipulation.
+
+All verbs work similarly:
+  1. The first argument is a data frame
+  2. The subsequent arguments describe what to do with the data frame, using the variable names
+  3. The result is a new data frame
+  
+### Filter
+Filter allows us to subset observations based on their values.
+
+For example we want o see all flights on January 1st.
+```
+filter(flights, month == 1, day == 1)
+```
+This returns the result, but if we want to continue using it we need to save it to a variable.
+
+```
+jan1 <- filter(flights, month == 1, day == 1)
+```
+
+If you want execute AND assign a variable wrap it all in parenthesis.
+
+```
+(dec25 <- filter(flights, month == 12, day == 25))
+```
+  
