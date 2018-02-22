@@ -69,4 +69,50 @@ If you want execute AND assign a variable wrap it all in parenthesis.
 ```
 (dec25 <- filter(flights, month == 12, day == 25))
 ```
+
+#### Comparisons
+To use filtering effectively, you have to know how to select the observations that you want using the comparison operatiors. R provides the usual
+  >
+  >=
+  <
+  <=
+  != not equal
+  == equal
   
+  Remember every number you see when using R is an approximation. Instead of relying on ==, use *near()*
+  
+#### Logical Operators
+Multiple arguments to filter() are combined "and"
+  Every expression must be true in order for a row to be included in the output
+  
+For other types of combinations you'll us
+  & = and
+  | = or
+  ! = not
+
+All flights in either Novemeber or December
+```
+filter(flights, month == 11 | month == 12)
+```
+More likely we want to us the in
+
+```
+nov_dec <- filter(flights, month %in% c(11,12))
+nov_dec
+```
+
+#### Missing Values
+
+One thing that will make running functions tough are missing values or NAs
+
+In order to find out if a value is missing we use *is.na()*
+
+filter() only includes rows where the condition is TRUE, excluding both FALSE and NA values.
+  However if we want to keep them explicitly put them in.
+  
+```
+df <- tibble(x = c(1,NA,3))
+filter(df, x>1)
+
+filter(df, is.na(x) | x >1)
+```
