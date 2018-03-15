@@ -116,3 +116,101 @@ filter(df, x>1)
 
 filter(df, is.na(x) | x >1)
 ```
+#### Arrange Rows with arrange()
+Arrange is similar to filter except instead of selecting rows, it changes the order.
+
+It requires a data frame and a set of column names. 
+
+```
+arrange(flights, year, month, day)
+```
+
+On the other hand you can use desc to order in descending order.
+
+```
+arrange(flights, desc(arr_delay))
+```
+
+Missing values will always be sorted at the end
+
+```
+df <- tibble(x = c(5,2,NA))
+arrange(df,x)
+arrange(df, desc(x))
+```
+
+```
+arrange(df, desc(is.na(x)))
+
+arrange(flights, desc(dep_delay))
+arrange(flights, dep_time)
+
+arrange(flights, air_time)
+
+arrange(flights, desc(distance))
+arrange(flights, distance)
+```
+
+#### Select Columns with select()
+Select allows you to find a subset of data. 
+
+```
+select(flights, year, month, day)
+
+select(flights, year:day)
+
+select(flights, -(year:day))
+
+select(flights, starts_with("abc"))
+
+select(flights, ends_with("xyz"))
+
+select(flights, contains"ijk")
+
+select(flights, "(.)\\1")
+
+select(flights, num_range("x", 1:3))
+```
+
+Select can also be used to rename variables, but it drops all the variables not explicitly mentioned. rename()
+
+A good way to get the rest of the columns is to use everything()
+
+```
+select(flights, month, month)
+```
+
+#### Add New Variables with mutate()
+Mutate() always add new columns at the end of the dataset. 
+
+```
+flights_small <- select(flights,
+year:day, ends_with("delay"),
+distance,
+air_time
+)
+
+mutate(flights_small,
+gain = arr_delay - dep_delay,
+speed = distance / air_time*60)
+```
+
+Note: If you only want to keep the new variables use transmute()
+
+Modular Arithmatic
+(%/% and %%)
+%/% = integer division
+%% = remainder
+
+```
+transmute(flights,
+dep_time,
+hour = dep_time %/% 100,
+minute = dep_time %% 100)
+```
+R provides functions for running sums, products, mins and maxesL
+  cumsum()
+  cumprod()
+  cummin()
+  cummax()
+  
