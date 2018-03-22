@@ -1,0 +1,22 @@
+---
+title: "ExploratoryDataAnalysis"
+author: "yp"
+date: "March 21, 2018"
+output: html_document
+---
+
+This chapter is about how to use visualization and transformations to explore data in a systematic way. Otherwise known as Exploratory Data Analysis or EDA.
+
+This is an iterative cycle
+1. Generate questions about your data
+2. Search for answers by visualizing, transforming and modeling your data
+3. Use what you learn to refine your questions and/or generate new questions
+
+EDA is not a formal process with a strict set of rules. 
+EDA is an important part of any data analysis, even if the questions are handed to you on a platter, because you will always need to investigate the quality of the data.
+
+To do data cleaning you'll need to deploy all the tools: visualization, transformation and modeling.
+
+## Questions
+
+The goal during EDA is to develop an understanding of the data.
