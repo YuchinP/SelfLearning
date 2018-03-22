@@ -273,3 +273,241 @@ You can read it as a series of imperative statements: group, then summarize, the
 
 A good way to pronounce %>% when reading code is "then"
 
+Behind the scenes x %>% f(y) turns into f(x,y), and x %>% f(y) %>% g(z) turns into g(f(x,y),z), and so on. You can use the pipe to rewrite multiple operations in a way you can read left to right, top to bottom.
+
+#### Missing Values
+
+What happens if we do not use the na.rm() argument.
+
+```
+flights %>%
+  group_by(year, month, day) %>%
+  summarize(mean = mean(dep_delay))
+```
+
+If there's any missing values in a aggregate function then the output will be missing values.
+
+```
+flights %>%
+  group_by(year, month, day) %>%
+  summarize(mean = mean(dep_delay, na.rm = TRUE))
+```
+
+In this case missing values represent cancelled flights. We could instead remove the cancelled flights first.
+
+```
+not_cancelled <- flights %>%
+  filter(!is.na(dep_delay), !is.na(arr_delay))
+
+not_cancelled %>%
+  group_by(year, month, day) %>%
+  summarize(mean = mean(dep_delay))
+```
+
+#### Counts 
+Whenever you do any aggregation, it's always a good idea to include either a count (n()), or a count of non missing values (sum(is.na(x))). That way you can check that you're not drawing conclusions based on very small amounts of data.
+
+```
+delays <- not_cancelled %>%
+  group_by(tailnum) %>%
+  summarize(
+    delay = mean(arr_delay)
+  )
+  
+  ggplot(data = delays, mapping = aes(x = delay)) +
+    geom_freqpoly(binwidth = 10)
+```
+  
+We can get more insight if we draw a scatter plot of number of flights versus average delay:
+
+```
+delays <- not_cancelled %>%
+  group_by(tailnum) %>%
+  summarize(
+    delay = mean(arr_delay, na.rm = TRUE),
+    n = n()
+  )
+  
+ggplot(data = delays, mapping = aes(x = n, y = delay)) +
+  geom_point(alpha = 1/10)
+  )
+```
+
+Following shows a handy pattern for integrating ggplot2 into dplyr.
+Filter out some of the smaller groups to get a better idea of the pattern and less of the extreme variation.
+
+```
+delays %>%
+  filter(n > 25) %>%
+  ggplot(mapping = aes(x = n, y = delay)) +
+    geom_point(alpha = 1/10)
+```
+
+Another common variation of this type of pattern.
+Looking at the average performance of batters in baseball is related to the number of tiumes they're at bat. Here we use the Lahman package to computer batting average of every MLB player.
+
+When the skill of the batter is measured against the number of opportunities to hit the ball two patterns become apparent.
+
+1. The variation in our aggregate decreases as we get more data points
+2. There's a positive correlation between skill and opportunities to hit the ball. This is because teams control who gets to play, and obviously they'll pick their best players.
+
+```
+#convert to a tibble so it prints nicely
+library(Lahman)
+batting <- as_tibble(Lahman::Batting)
+
+batters <- batting %>%
+  group_by(playerID) %>%
+  summarize(
+    ba = sum(H, na.rm = TRUE) / sum(AB, na.rm = TRUE),
+    ab = sum(AB, na.rm = TRUE)
+  )
+
+batters %>%
+  filter(ab > 100) %>%
+  ggplot(mapping = aes(x = ab, y = ba)) +
+    geom_point() +
+    geom_smooth(se = FALSE)
+#> geom_smooth() using method = gam
+```
+This also has important implications for ranking. If you naively sort on desc(ba) the people with the best batting averages are clearly lucky, not skilled.
+
+```
+batters %>%
+  arrange(desc(ba))
+
+
+batters %>%
+  filter(ab > 10) %>%
+  arrange(desc(ba))
+```
+
+#### Useful Summary functions
+It's sometimes useful to combine aggregation with logical sub-setting. We haven't talked about this sort of subsetting yet,
+
+```
+not_cancelled %>%
+  group_by(year, month, day) %>%
+  summarize(
+    #average delay
+    avg_delay1 = mean(arr_delay),
+    # average positive delay:
+    avg_delay2 = mean(arr_delay[arr_delay >0])
+    )
+```
+
+Measures of Spread
+```
+not_cancelled %>%
+  group_by(dest) %>%
+  summarize(distance_sd = sd(distance)) %>%
+  arrange(desc(distance_sd))
+```
+
+Measures of Rank
+```
+not_cancelled %>%
+  group_by(year,month, day) %>%
+  summarize(
+    first = min(dep_time),
+    last = max(dep_time)
+  )
+```
+
+Measures of Position
+Getting the first and last departure for each day
+```
+not_cancelled %>%
+  group_by(year, month, day) %>%
+  summarize(
+    first_dep = first(dep_time),
+    last_dep = last(dep_time)
+  )
+```
+
+These functions are complementary to filtering on ranks. Filtering gives you all variables, with each observation in a seperate row:
+
+```
+  not_cancelled %>%
+    group_by(year, month, day) %>%
+    mutate(r = min_rank(desc(dep_time))) %>%
+    filter(r %in% range(r))
+```
+
+Counts n()
+n() takes no arguments, and returns the size of the current group. To count the number of non-missing value, use sum(!is.na(x)). To count the number of distinct (unique) values, use n_distinct(x):
+
+```
+#which destinations have the most carriers?
+not_cancelled %>%
+  group_by(dest) %>%
+  summarize(carriers = n_distinct(carrier)) %>%
+  arrange(desc(carriers))
+```
+
+count is useful just to give you an idea of a dataset
+```
+not_cancelled %>%
+  count(tailnum, wt = distance)
+```
+
+Counts and proportions of logical values
+
+```
+#how many flights left before 5am? usually indicate delayed flights from previous day
+not_cancelled %>%
+  group_by(year, month, day) %>%
+  summarize(n_early = sum(dep_time < 500))
+
+#What proportion of flights are delayed by more than an hour
+
+not_cancelled %>%
+  group_by(year, month, day) %>%
+  summarize(hour_perc = mean(arr_delay > 60))
+```
+
+#### Grouping by Multiple Variables
+
+When you group by multiple variables, each summary peels off one level of the grouping. That makes it easy to progressively roll up a dataset.
+
+```
+daily <- group_by(flights, year, month, day)
+(per_day <- summarize(daily, flights = n()))
+
+(per_month <- summarize(per_day, flights = sum(flights)))
+
+(per_year <- summarize(per_month, flights = sum(flights)))
+```
+
+#### Grouped Mutates (and Filters)
+
+Grouping is most useful in conjuction with summarize(), but you can also do operations with mutate and filter.
+
+Find the worst members of each group
+
+```
+flights_small %>%
+  group_by(year, month, day) %>%
+  filter(rank(desc(arr_delay)) < 10)
+```
+
+Find all groups bigger than a threshold
+```
+popular_dest <- flights %>%
+  group_by(dest) %>%
+  filter(n() > 365)
+popular_dest
+```
+
+Standardize to compute per group metrics
+```
+popular_dest %>%
+  filter(arr_delay > 0) %>%
+  mutate(prop_delay = arr_delay / sum(arr_delay)) %>%
+  select(year:day, dest, arr_delay, prop_delay)
+```
+
+A grouped filter is a grouped mutate followed by an ungrouped filter. Generally good to avoid except for quick and dirty manipulations. 
+
+Functions that work best in grouped mutates and filters are known as window functions. 
+    
