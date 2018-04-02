@@ -1,0 +1,57 @@
+---
+title: "shrek breakdown"
+author: "yp"
+date: "April 2, 2018"
+output: html_document
+---
+
+
+Load Libraries
+```
+library(dplyr)
+library(ggplot2)
+library(tidytext)
+```
+```
+shrek_lyrics <- readLines("Shreklyrics.txt")
+
+shrek_df <- data_frame(Text = shrek_lyrics)
+
+head(shrek_df, n = 15)
+```
+
+
+Unnest
+```
+shrek_words <- shrek_df %>%
+  unnest_tokens(output = word, input = Text)
+```
+
+Now we need to remove the "stop words". (the, and, of, etc.)
+
+```
+shrek_words <- shrek_words %>%
+  anti_join(stop_words)
+```
+
+Count words
+
+```
+shrek_wordcount <- shrek_words %>% count(word, sort = TRUE)
+head(shrek_wordcount, n = 15)
+```
+
+```
+shrek_wordcount %>%
+  mutate(word = reorder(word,n)) %>%
+  filter(n >8) %>%
+  ggplot(aes(word,n)) +
+  geom_col(fill = "green") +
+  coord_flip() +
+  labs(x = "Word \n", y = "\n Count ", title = "Word Counts in the Shrek Soundtrack \n") +
+  geom_text(aes(label = n), hjust = 1.2, color = "black", fontface = "bold") +
+  theme(plot.title = element_text(hjust = 0.5),
+  axis.title.x = element_blank(),
+  axis.ticks.x = element_blank(),
+  axis.text.x = element_blank(),
+  axis.title.y = element_text(face = "bold", color = "darkblue", size =12))
